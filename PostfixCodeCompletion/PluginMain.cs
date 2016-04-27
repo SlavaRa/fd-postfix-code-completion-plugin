@@ -19,7 +19,6 @@ using PostfixCodeCompletion.Helpers;
 using ProjectManager;
 using ProjectManager.Projects.Haxe;
 using ScintillaNet;
-using PluginUI = ASCompletion.PluginUI;
 using TemplateUtils = PostfixCodeCompletion.Helpers.TemplateUtils;
 
 namespace PostfixCodeCompletion
@@ -57,6 +56,8 @@ namespace PostfixCodeCompletion
         {
             InitBasics();
             LoadSettings();
+            TemplateUtils.Settings = (Settings)Settings;
+            CompletionHelper.Settings = (Settings)Settings;
             AddEventHandlers();
         }
 
@@ -98,7 +99,7 @@ namespace PostfixCodeCompletion
                     if (keys == (Keys.Control | Keys.Space))
                     {
                         if (CompletionList.Active) return;
-                        var expr = GetPostfixCompletionExpr();
+                        var expr = CompletionHelper.GetCurrentCompletionExpr();
                         if (expr == null || expr.IsNull()) return;
                         e.Handled = ASComplete.OnShortcut(keys, PluginBase.MainForm.CurrentDocument.SciControl);
                         completionList.VisibleChanged -= OnCompletionListVisibleChanged;
@@ -118,9 +119,9 @@ namespace PostfixCodeCompletion
         /// </summary>
         void InitBasics()
         {
-            var dataPath = Path.Combine(PathHelper.DataDir, Name);
-            if (!Directory.Exists(dataPath)) Directory.CreateDirectory(dataPath);
-            settingFilename = Path.Combine(dataPath, "Settings.fdb");
+            var path = Path.Combine(PathHelper.DataDir, Name);
+            if (!Directory.Exists(path)) Directory.CreateDirectory(path);
+            settingFilename = Path.Combine(path, "Settings.fdb");
         }
 
         /// <summary>
@@ -131,7 +132,6 @@ namespace PostfixCodeCompletion
             Settings = new Settings();
             if (!File.Exists(settingFilename)) SaveSettings();
             else Settings = (Settings) ObjectSerializer.Deserialize(settingFilename, Settings);
-            TemplateUtils.Settings = (Settings) Settings;
         }
 
         /// <summary>
@@ -149,12 +149,12 @@ namespace PostfixCodeCompletion
         /// </summary>
         void SaveSettings() => ObjectSerializer.Serialize(settingFilename, Settings);
 
-        void UpdateCompletionList() => UpdateCompletionList(GetPostfixCompletionExpr());
+        void UpdateCompletionList() => UpdateCompletionList(CompletionHelper.GetCurrentCompletionExpr());
 
         void UpdateCompletionList(ASResult expr)
         {
             if (expr == null || expr.IsNull()) return;
-            var target = GetPostfixCompletionTarget(expr);
+            var target = CompletionHelper.GetCompletionTarget(expr);
             if (target != null)
             {
                 UpdateCompletionList(target, expr);
@@ -170,7 +170,7 @@ namespace PostfixCodeCompletion
         void UpdateCompletionList(MemberModel target, ASResult expr)
         {
             if (target == null || !TemplateUtils.GetHasTemplates()) return;
-            var items = GetPostfixCompletionItems(target, expr);
+            var items = CompletionHelper.GetCompletionItems(target, expr);
             var allItems = Reflector.CompletionList.AllItems;
             if (allItems != null)
             {
@@ -200,194 +200,6 @@ namespace PostfixCodeCompletion
             completionListItemCount = list.Items.Count;
             list.SelectedValueChanged -= OnCompletionListSelectedValueChanged;
             list.SelectedValueChanged += OnCompletionListSelectedValueChanged;
-        }
-
-        static ASResult GetPostfixCompletionExpr()
-        {
-            var doc = PluginBase.MainForm.CurrentDocument;
-            if (doc == null || !doc.IsEditable) return null;
-            var language = PluginBase.CurrentProject.Language;
-            if (!ASContext.GetLanguageContext(language).IsFileValid || !TemplateUtils.GetHasTemplates(language)) return null;
-            var sci = doc.SciControl;
-            if (sci.PositionIsOnComment(sci.CurrentPos)) return null;
-            var currentLine = sci.CurrentLine;
-            var positionFromLine = sci.LineIndentPosition(currentLine);
-            var position = -1;
-            var characters = ScintillaControl.Configuration.GetLanguage(language).characterclass.Characters;
-            for (var i = sci.CurrentPos; i > positionFromLine; i--)
-            {
-                var c = (char) sci.CharAt(i);
-                if (c == '.')
-                {
-                    position = i;
-                    break;
-                }
-                if (c > ' ' && !characters.Contains(c) && c != '$') break;
-            }
-            if (position == -1) return null;
-            position -= positionFromLine;
-            var line = sci.GetLine(currentLine).Trim();
-            line = line.Remove(position);
-            line = line.Insert(position, ";");
-            return Reflector.ASGenerator.GetStatementReturnType(sci, line, positionFromLine).Resolve;
-        }
-
-        static MemberModel GetPostfixCompletionTarget(ASResult expr)
-        {
-            if (expr == null || expr.IsNull()) return null;
-            var member = expr.Member;
-            var voidKey = ASContext.Context.Features.voidKey;
-            if (!string.IsNullOrEmpty(member?.Type) && member.Type != voidKey) return member;
-            var type = expr.Type;
-            if (type != null && !type.IsVoid() && !string.IsNullOrEmpty(type.Type) && type.Type != voidKey)
-                return type;
-            return null;
-        }
-
-        List<ICompletionListItem> GetPostfixCompletionItems(MemberModel target, ASResult expr)
-        {
-            var result = new List<ICompletionListItem>();
-            if (expr.Member != null) result.AddRange(GetCompletionItems(expr.Member.Type, target, expr));
-            else if (expr.Type != null) result.AddRange(GetCompletionItems(expr.Type.Type, target, expr));
-            result.AddRange(GetCompletionItems(TemplateUtils.PatternMember, expr));
-            if (IsNullable(target)) result.AddRange(GetCompletionItems(TemplateUtils.PatternNullable, expr));
-            if (IsCollection(target)) result.AddRange(GetCompletionItems(TemplateUtils.PatternCollection, expr));
-            if (IsHash(target)) result.AddRange(GetCompletionItems(TemplateUtils.PatternHash, expr));
-            if (PluginBase.MainForm.CurrentDocument.SciControl.ConfigurationLanguage.ToLower() == "haxe")
-            {
-                var type = !string.IsNullOrEmpty(expr.Type?.Type) && expr.Type.Type != ASContext.Context.Features.voidKey ? expr.Type : null;
-                if (type != null)
-                {
-                    if (IsCollection(type)) result.AddRange(GetCompletionItems(TemplateUtils.PatternCollection, expr));
-                    if (IsHash(type)) result.AddRange(GetCompletionItems(TemplateUtils.PatternHash, expr));
-                }
-            }
-            if (IsBoolean(target)) result.AddRange(GetCompletionItems(TemplateUtils.PatternBool, expr));
-            if (IsNumber(target)) result.AddRange(GetCompletionItems(TemplateUtils.PatternNumber, expr));
-            if (IsString(target)) result.AddRange(GetCompletionItems(TemplateUtils.PatternString, expr));
-            if (IsType(target)) result.AddRange(GetCompletionItems(TemplateUtils.PatternType, expr));
-            return result.Distinct().ToList();
-        }
-
-        bool IsNullable(MemberModel target) => !IsNumber(target) && target.Type != ASContext.Context.Features.booleanKey;
-
-        static bool IsCollection(MemberModel target)
-        {
-            var type = target.Type;
-            var arrayKey = ASContext.Context.Features.arrayKey;
-            if (type == arrayKey) return true;
-            switch (PluginBase.MainForm.CurrentDocument.SciControl.ConfigurationLanguage)
-            {
-                case "as2":
-                case "as3":
-                    return type.Contains("Vector.<") || type.Contains($"@{arrayKey}");
-                case "haxe":
-                    return Reflector.ASGenerator.CleanType(type) == Reflector.ASGenerator.CleanType(arrayKey)
-                        || (type.Contains("Vector<") && Reflector.ASGenerator.CleanType(type) == Reflector.ASGenerator.CleanType("Vector<T>"));
-                default:
-                    return false;
-            }
-        }
-
-        static bool IsHash(MemberModel target)
-        {
-            switch (PluginBase.MainForm.CurrentDocument.SciControl.ConfigurationLanguage.ToLower())
-            {
-                case "as2":
-                case "as3":
-                    var type = target.Type;
-                    return type == ASContext.Context.Features.objectKey || type == "Dictionary";
-                case "haxe":
-                    Func<MemberModel, bool> isIterator = member =>
-                    {
-                        var cleanType = Reflector.ASGenerator.CleanType(member.Type);
-                        return cleanType == "Iterator" || cleanType == "Iterable";
-                    };
-                    if (isIterator(target)) return true;
-                    if (target is ClassModel)
-                    {
-                        var classModel = target as ClassModel;
-                        while (classModel != null && !classModel.IsVoid())
-                        {
-                            if (classModel.Members.Items.Any(isIterator))
-                                return true;
-                            classModel.ResolveExtends();
-                            classModel = classModel.Extends;
-                        }
-                    }
-                    return false;
-                default: return false;
-            }
-        }
-
-        static bool IsBoolean(MemberModel target) => target.Type == ASContext.Context.Features.booleanKey;
-
-        bool IsNumber(MemberModel target)
-        {
-            var type = target is ClassModel ? ((ClassModel)target).QualifiedName : target.Type;
-            if (type == ASContext.Context.Features.numberKey) return true;
-            var language = PluginBase.MainForm.CurrentDocument.SciControl.ConfigurationLanguage.ToLower();
-            var features = ((Settings)Settings).LanguageFeatures.First(it => it.Language == language);
-            return features != null && features.Numeric.Contains(type);
-        }
-
-        static bool IsString(MemberModel target) => target.Type == ASContext.Context.Features.stringKey;
-
-        static bool IsType(MemberModel target) => target.Flags == FlagType.Class;
-
-        static IEnumerable<ICompletionListItem> GetCompletionItems(string pattern, MemberModel target, ASResult expr)
-        {
-            var type = ASContext.Context.ResolveType(target.Type, ASContext.Context.CurrentModel);
-            Dictionary<string, string> templates = null;
-            while(!type.IsVoid())
-            {
-                pattern = type.QualifiedName;
-                templates = TemplateUtils.GetTemplates(type.QualifiedName);
-                if (templates.Count > 0) break;
-                type.ResolveExtends();
-                type = type.Extends;
-            }
-            return GetCompletionItems(templates ?? new Dictionary<string, string>(), pattern, expr);
-        }
-
-        static IEnumerable<ICompletionListItem> GetCompletionItems(string pattern, ASResult expr) => GetCompletionItems(TemplateUtils.GetTemplates(pattern), pattern, expr);
-
-        static IEnumerable<ICompletionListItem> GetCompletionItems(Dictionary<string, string> templates, string pattern, ASResult expr)
-        {
-            var sci = PluginBase.MainForm.CurrentDocument.SciControl;
-            Bitmap itemIcon = null;
-            var haxeStringCode = false;
-            var isHaxe = sci.ConfigurationLanguage.ToLower() == "haxe";
-            if (isHaxe && GetPostfixCompletionTarget(expr).Type == ASContext.Context.Features.stringKey)
-            {
-                var pos = ScintillaControlHelper.GetExpressionStartPosition(sci, sci.CurrentPos, expr);
-                haxeStringCode = sci.CharAt(pos) == '"' && sci.CharAt(pos + 1) != '\\' && sci.CharAt(pos + 2) == '"';
-                if (haxeStringCode) itemIcon = (Bitmap) ASContext.Panel.GetIcon(PluginUI.ICON_PROPERTY);
-            }
-            var result = new List<ICompletionListItem>();
-            foreach (var pathToTemplate in templates)
-            {
-                var fileName = Path.GetFileNameWithoutExtension(pathToTemplate.Key);
-                if (isHaxe && fileName == "code" && !haxeStringCode) continue;
-                var template = pathToTemplate.Value;
-                switch (pattern)
-                {
-                    case TemplateUtils.PatternCollection:
-                        template = TemplateUtils.ProcessCollectionTemplate(template, expr);
-                        break;
-                    case TemplateUtils.PatternHash:
-                        template = TemplateUtils.ProcessHashTemplate(template, expr);
-                        break;
-                }
-                var item = new PostfixCompletionItem(fileName, template, expr) {Pattern = pattern};
-                if (isHaxe && fileName == "code" && itemIcon != null)
-                {
-                    item.Icon = itemIcon;
-                    itemIcon = null;
-                }
-                result.Add(item);
-            }
-            return result;
         }
 
         static Process CreateHaxeProcess(string args)
@@ -428,7 +240,7 @@ namespace PostfixCodeCompletion
                     return;
                 }
                 if (!Reflector.ASComplete.HandleDotCompletion(sci, true) || CompletionList.Active) return;
-                var expr = GetPostfixCompletionExpr();
+                var expr = CompletionHelper.GetCurrentCompletionExpr();
                 if (expr == null || expr.IsNull()) return;
                 Reflector.CompletionList.CompletionList.VisibleChanged -= OnCompletionListVisibleChanged;
                 UpdateCompletionList(expr);
@@ -463,7 +275,8 @@ namespace PostfixCodeCompletion
             }
             if (!(PluginBase.CurrentProject is HaxeProject)) return;
             var settings = (HaXeSettings)((Context) ASContext.GetLanguageContext("haxe")).Settings;
-            if (!IsValidHaxeSDK(settings.InstalledSDKs.FirstOrDefault(sdk => sdk.Path == PluginBase.CurrentProject.CurrentSDK))) return;
+            var sdk = settings.InstalledSDKs.FirstOrDefault(it => it.Path == PluginBase.CurrentProject.CurrentSDK);
+            if (sdk == null || new SemVer(sdk.Version).IsOlderThan(new SemVer("3.2.0"))) return;
             switch (settings.CompletionMode)
             {
                 case HaxeCompletionModeEnum.CompletionServer:
@@ -483,26 +296,10 @@ namespace PostfixCodeCompletion
             }
         }
 
-        static bool IsValidHaxeSDK(InstalledSDK sdk)
-        {
-            if (sdk == null) return false;
-            var version = sdk.Version;
-            var hyphenIndex = version.IndexOf('-');
-            if (hyphenIndex >= 0) version = version.Substring(0, hyphenIndex);
-            var numbers = version.Split('.');
-            var major = numbers.Length >= 1 ? int.Parse(numbers[0]) : 0;
-            var minor = numbers.Length >= 2 ? int.Parse(numbers[1]) : 0;
-            return major >= 3 && minor >= 2;
-        }
-
         static void OnHaxeContextFallbackNeeded(bool notSupported)
         {
             TraceManager.AddAsync("PCC: This SDK does not support server mode");
-            if (completionModeHandler != null)
-            {
-                completionModeHandler.Stop();
-                completionModeHandler = null;
-            }
+            completionModeHandler?.Stop();
             completionModeHandler = new CompilerCompletionHandler(CreateHaxeProcess(string.Empty));
         }
 
