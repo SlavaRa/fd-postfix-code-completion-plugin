@@ -149,11 +149,7 @@ namespace PostfixCodeCompletion
         /// </summary>
         void SaveSettings() => ObjectSerializer.Serialize(settingFilename, Settings);
 
-        void UpdateCompletionList()
-        {
-            var expr = GetPostfixCompletionExpr();
-            UpdateCompletionList(expr);
-        }
+        void UpdateCompletionList() => UpdateCompletionList(GetPostfixCompletionExpr());
 
         void UpdateCompletionList(ASResult expr)
         {
