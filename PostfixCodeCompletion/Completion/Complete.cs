@@ -13,42 +13,99 @@ using PluginCore.Controls;
 using PluginCore.Managers;
 using PluginCore.Utilities;
 using PostfixCodeCompletion.Helpers;
+using ProjectManager.Projects.AS3;
 using ProjectManager.Projects.Haxe;
 using TemplateUtils = PostfixCodeCompletion.Helpers.TemplateUtils;
 
 namespace PostfixCodeCompletion.Completion
 {
-    internal class Complete
+    public class PCCCompleteFactory
     {
-        static IHaxeCompletionHandler completionModeHandler;
-        static int completionListItemCount;
+        public IPCCComplete CreateComplete()
+        {
+            var project = PluginBase.CurrentProject;
+            if (project is AS3Project) return new PCCASComplete();
+            if (project is HaxeProject) return new PCCHaxeComplete();
+            return new PCCComplete();
+        }
+    }
+
+    public class Complete
+    {
+        public static PCCCompleteFactory Factory = new PCCCompleteFactory();
+        static IPCCComplete current;
 
         internal static void Start()
         {
-            var project = PluginBase.CurrentProject;
-            if (project == null) return;
-            var completionList = Reflector.CompletionList.CompletionList;
-            completionList.VisibleChanged -= OnCompletionListVisibleChanged;
-            completionList.VisibleChanged += OnCompletionListVisibleChanged;
-            if (!(project is HaxeProject)) return;
-            var context = (Context) ASContext.GetLanguageContext("haxe");
-            if (context == null) return;
-            var settings = (HaXeSettings) context.Settings;
-            settings.CompletionModeChanged -= OnHaxeCompletionModeChanged;
-            settings.CompletionModeChanged += OnHaxeCompletionModeChanged;
-            OnHaxeCompletionModeChanged();
+            current?.Stop();
+            current = Factory.CreateComplete();
+            current.Start();
         }
 
         internal static void Stop()
         {
+            current?.Stop();
+            current = null;
+        }
+
+        internal static bool OnShortcut(Keys keys) => current?.OnShortcut(keys) ?? false;
+
+        internal static bool OnCharAdded(int value) => current?.OnCharAdded(value) ?? false;
+
+        internal static void UpdateCompletionList() => current?.UpdateCompletionList();
+
+        internal static void UpdateCompletionList(ASResult expr) => current?.UpdateCompletionList(expr);
+
+        internal static void UpdateCompletionList(MemberModel target, ASResult expr) => current?.UpdateCompletionList(target, expr);
+    }
+
+    public interface IPCCComplete
+    {
+        void Start();
+        void Stop();
+        bool OnShortcut(Keys keys);
+        bool OnCharAdded(int value);
+        void UpdateCompletionList();
+        bool UpdateCompletionList(ASResult expr);
+        void UpdateCompletionList(MemberModel target, ASResult expr);
+    }
+
+    public class PCCComplete : IPCCComplete
+    {
+        public virtual void Start() { }
+
+        public virtual void Stop() { }
+
+        public virtual bool OnShortcut(Keys keys) => false;
+
+        public virtual bool OnCharAdded(int value) => false;
+
+        public virtual void UpdateCompletionList() { }
+
+        public virtual bool UpdateCompletionList(ASResult expr) => false;
+
+        public virtual void UpdateCompletionList(MemberModel target, ASResult expr) { }
+    }
+
+    public class PCCASComplete : PCCComplete
+    {
+        static int completionListItemCount;
+
+        public override void Start()
+        {
+            var completionList = Reflector.CompletionList.CompletionList;
+            completionList.VisibleChanged -= OnCompletionListVisibleChanged;
+            completionList.VisibleChanged += OnCompletionListVisibleChanged;
+        }
+
+        public override void Stop()
+        {
             var completionList = Reflector.CompletionList.CompletionList;
             completionList.VisibleChanged -= OnCompletionListVisibleChanged;
             completionList.SelectedValueChanged -= OnCompletionListSelectedValueChanged;
-            completionModeHandler?.Stop();
-            completionModeHandler = null;
         }
 
-        internal static bool OnShortcut(Keys keys)
+        public override bool OnShortcut(Keys keys)
         {
             if (keys != (Keys.Control | Keys.Space)) return false;
             var completionList = Reflector.CompletionList.CompletionList;
@@ -62,43 +119,37 @@ namespace PostfixCodeCompletion.Completion
             return result;
         }
 
-        internal static void OnCharAdded(int value)
+        public override bool OnCharAdded(int value)
         {
-            if ((char) value != '.' || !TemplateUtils.GetHasTemplates()) return;
+            if ((char)value != '.' || !TemplateUtils.GetHasTemplates()) return false;
             var sci = PluginBase.MainForm.CurrentDocument.SciControl;
-            if (sci.PositionIsOnComment(sci.CurrentPos)) return;
+            if (sci.PositionIsOnComment(sci.CurrentPos)) return false;
             if (ASComplete.OnChar(sci, value, false))
             {
                 if (Reflector.CompletionList.CompletionList.Visible) UpdateCompletionList();
-                return;
+                return false;
             }
-            if (!Reflector.ASComplete.HandleDotCompletion(sci, true) || CompletionList.Active) return;
+            if (!Reflector.ASComplete.HandleDotCompletion(sci, true) || CompletionList.Active) return false;
             var expr = CompletionHelper.GetCurrentCompletionExpr();
-            if (expr == null || expr.IsNull()) return;
+            if (expr == null || expr.IsNull()) return false;
             Reflector.CompletionList.CompletionList.VisibleChanged -= OnCompletionListVisibleChanged;
             UpdateCompletionList(expr);
             Reflector.CompletionList.CompletionList.VisibleChanged += OnCompletionListVisibleChanged;
+            return true;
         }
 
-        internal static void UpdateCompletionList() => UpdateCompletionList(CompletionHelper.GetCurrentCompletionExpr());
+        public override void UpdateCompletionList() => UpdateCompletionList(CompletionHelper.GetCurrentCompletionExpr());
 
-        internal static void UpdateCompletionList(ASResult expr)
+        public override bool UpdateCompletionList(ASResult expr)
         {
-            if (expr == null || expr.IsNull()) return;
+            if (expr == null || expr.IsNull()) return false;
             var target = CompletionHelper.GetCompletionTarget(expr);
-            if (target != null)
-            {
-                UpdateCompletionList(target, expr);
-                return;
-            }
-            if (expr.Context == null || completionModeHandler == null) return;
-            var sci = PluginBase.MainForm.CurrentDocument.SciControl;
-            if (sci.ConfigurationLanguage.ToLower() != "haxe" || sci.CharAt(expr.Context.Position) != '.') return;
-            var hc = new HaxeComplete(sci, expr, false, completionModeHandler, HaxeCompilerService.Type);
-            hc.GetPositionType(OnFunctionTypeResult);
+            if (target == null) return false;
+            UpdateCompletionList(target, expr);
+            return true;
         }
 
-        internal static void UpdateCompletionList(MemberModel target, ASResult expr)
+        public override void UpdateCompletionList(MemberModel target, ASResult expr)
         {
             if (target == null || !TemplateUtils.GetHasTemplates()) return;
             var items = CompletionHelper.GetCompletionItems(target, expr);
@@ -133,42 +184,56 @@ namespace PostfixCodeCompletion.Completion
             list.SelectedValueChanged += OnCompletionListSelectedValueChanged;
         }
 
-        static Process CreateHaxeProcess(string args)
-        {
-            var process = Path.Combine(PluginBase.CurrentProject.CurrentSDK, "haxe.exe");
-            if (!File.Exists(process)) return null;
-            var result = new Process
-            {
-                StartInfo =
-                {
-                    FileName = process,
-                    Arguments = args,
-                    UseShellExecute = false,
-                    RedirectStandardOutput = true,
-                    RedirectStandardError = true,
-                    CreateNoWindow = true,
-                    WindowStyle = ProcessWindowStyle.Hidden
-                },
-                EnableRaisingEvents = true
-            };
-            return result;
-        }
-
-        static void OnCompletionListVisibleChanged(object o, EventArgs args)
+        protected virtual void OnCompletionListVisibleChanged(object o, EventArgs args)
         {
             var list = Reflector.CompletionList.CompletionList;
             if (list.Visible) UpdateCompletionList();
             else list.SelectedValueChanged -= OnCompletionListSelectedValueChanged;
         }
 
-        static void OnCompletionListSelectedValueChanged(object sender, EventArgs args)
+        protected virtual void OnCompletionListSelectedValueChanged(object sender, EventArgs args)
         {
             var list = Reflector.CompletionList.CompletionList;
             list.SelectedValueChanged -= OnCompletionListSelectedValueChanged;
             if (completionListItemCount != list.Items.Count) UpdateCompletionList();
         }
+    }
 
-        static void OnHaxeCompletionModeChanged()
+    public class PCCHaxeComplete : PCCASComplete
+    {
+        IHaxeCompletionHandler completionModeHandler;
+
+        public override void Start()
+        {
+            base.Start();
+            var context = (Context) ASContext.GetLanguageContext("haxe");
+            if (context == null) return;
+            var settings = (HaXeSettings) context.Settings;
+            settings.CompletionModeChanged -= OnHaxeCompletionModeChanged;
+            settings.CompletionModeChanged += OnHaxeCompletionModeChanged;
+            OnHaxeCompletionModeChanged();
+        }
+
+        public override void Stop()
+        {
+            base.Stop();
+            completionModeHandler?.Stop();
+            completionModeHandler = null;
+        }
+
+        public override bool UpdateCompletionList(ASResult expr)
+        {
+            var result = base.UpdateCompletionList(expr);
+            if (!result) return true;
+            if (expr == null || expr.IsNull() || expr.Context == null || completionModeHandler == null) return false;
+            var sci = PluginBase.MainForm.CurrentDocument.SciControl;
+            if (sci.CharAt(expr.Context.Position) != '.') return false;
+            var hc = new HaxeComplete(sci, expr, false, completionModeHandler, HaxeCompilerService.Type);
+            hc.GetPositionType(OnFunctionTypeResult);
+            return true;
+        }
+
+        void OnHaxeCompletionModeChanged()
         {
             if (completionModeHandler != null)
             {
@@ -189,7 +254,7 @@ namespace PostfixCodeCompletion.Completion
                             CreateHaxeProcess($"--wait {settings.CompletionServerPort}"),
                             settings.CompletionServerPort
                         );
-                        ((CompletionServerCompletionHandler)completionModeHandler).FallbackNeeded += OnHaxeContextFallbackNeeded;
+                        ((CompletionServerCompletionHandler) completionModeHandler).FallbackNeeded += OnHaxeContextFallbackNeeded;
                     }
                     break;
                 default:
@@ -198,14 +263,14 @@ namespace PostfixCodeCompletion.Completion
             }
         }
 
-        static void OnHaxeContextFallbackNeeded(bool notSupported)
+        void OnHaxeContextFallbackNeeded(bool notSupported)
         {
             TraceManager.AddAsync("PCC: This SDK does not support server mode");
             completionModeHandler?.Stop();
             completionModeHandler = new CompilerCompletionHandler(CreateHaxeProcess(string.Empty));
         }
 
-        static void OnFunctionTypeResult(HaxeComplete hc, HaxeCompleteResult result, HaxeCompleteStatus status)
+        void OnFunctionTypeResult(HaxeComplete hc, HaxeCompleteResult result, HaxeCompleteStatus status)
         {
             switch (status)
             {
@@ -233,5 +298,27 @@ namespace PostfixCodeCompletion.Completion
                     break;
             }
         }
+
+        static Process CreateHaxeProcess(string args)
+        {
+            var process = Path.Combine(PluginBase.CurrentProject.CurrentSDK, "haxe.exe");
+            if (!File.Exists(process)) return null;
+            var result = new Process
+            {
+                StartInfo =
+                {
+                    FileName = process,
+                    Arguments = args,
+                    UseShellExecute = false,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    CreateNoWindow = true,
+                    WindowStyle = ProcessWindowStyle.Hidden
+                },
+                EnableRaisingEvents = true
+            };
+            return result;
+        }
+
     }
 }
