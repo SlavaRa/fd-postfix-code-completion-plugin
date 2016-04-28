@@ -1,4 +1,6 @@
-﻿using FlashDevelop;
+﻿using ASCompletion.Context;
+using ASCompletion.Settings;
+using FlashDevelop;
 using NSubstitute;
 using NUnit.Framework;
 using PluginCore;
@@ -8,7 +10,7 @@ using ScintillaNet.Enums;
 namespace PostfixCodeCompletion
 {
     [TestFixture]
-    public class PostfixCodeCompletionCompleteTests
+    public class PostfixCodeCompletionTests
     {
         private MainForm mainForm;
         private ISettings settings;
@@ -54,6 +56,24 @@ namespace PostfixCodeCompletion
                 IsUseTabs = settings.UseTabs,
                 TabWidth = settings.TabWidth
             };
+        }
+
+        [TestFixture]
+        class ContextualActions : PostfixCodeCompletionTests
+        {
+            [TestFixtureSetUp]
+            public void ContextualActionsSetup()
+            {
+                var pluginMain = new PluginMain();
+                ASContext.CommonSettings.Returns(new GeneralSettings());
+                ASContext.Context = Substitute.For<IASContext>();
+            }
+
+            [TestFixture]
+            class ShowCompletionListForMember : ContextualActions
+            {
+                
+            }
         }
     }
 }
