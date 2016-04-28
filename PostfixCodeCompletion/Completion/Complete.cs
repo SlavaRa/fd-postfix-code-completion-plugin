@@ -23,7 +23,7 @@ namespace PostfixCodeCompletion.Completion
         static IHaxeCompletionHandler completionModeHandler;
         static int completionListItemCount;
 
-        public static void Start()
+        internal static void Start()
         {
             var project = PluginBase.CurrentProject;
             if (project == null) return;
@@ -39,13 +39,13 @@ namespace PostfixCodeCompletion.Completion
             OnHaxeCompletionModeChanged();
         }
 
-        public static void Stop()
+        internal static void Stop()
         {
-            completionModeHandler?.Stop();
-            completionModeHandler = null;
             var completionList = Reflector.CompletionList.CompletionList;
             completionList.VisibleChanged -= OnCompletionListVisibleChanged;
             completionList.SelectedValueChanged -= OnCompletionListSelectedValueChanged;
+            completionModeHandler?.Stop();
+            completionModeHandler = null;
         }
 
         internal static bool OnShortcut(Keys keys)
