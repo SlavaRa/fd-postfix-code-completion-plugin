@@ -224,7 +224,7 @@ namespace PostfixCodeCompletion.Completion
         public override bool UpdateCompletionList(ASResult expr)
         {
             var result = base.UpdateCompletionList(expr);
-            if (!result) return true;
+            if (result) return true;
             if (expr == null || expr.IsNull() || expr.Context == null || completionModeHandler == null) return false;
             var sci = PluginBase.MainForm.CurrentDocument.SciControl;
             if (sci.CharAt(expr.Context.Position) != '.') return false;
