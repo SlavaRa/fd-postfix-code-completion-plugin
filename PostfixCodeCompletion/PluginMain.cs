@@ -53,7 +53,7 @@ namespace PostfixCodeCompletion
         /// </summary>
         public void Dispose()
         {
-            Complete.CompletionModeHandler?.Stop();
+            Complete.Stop();
             SaveSettings();
         }
 
@@ -65,7 +65,7 @@ namespace PostfixCodeCompletion
             switch (e.Type)
             {
                 case EventType.Command:
-                    if (((DataEvent) e).Action == ProjectManagerEvents.Project) Complete.Restart();
+                    if (((DataEvent) e).Action == ProjectManagerEvents.Project) Complete.Start();
                     break;
                 case EventType.Keys:
                     e.Handled = Complete.OnShortcut(((KeyEvent) e).Value);

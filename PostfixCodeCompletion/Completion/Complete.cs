@@ -20,11 +20,10 @@ namespace PostfixCodeCompletion.Completion
 {
     internal class Complete
     {
-        internal static IHaxeCompletionHandler CompletionModeHandler;
-
+        static IHaxeCompletionHandler completionModeHandler;
         static int completionListItemCount;
 
-        public static void Restart()
+        public static void Start()
         {
             var project = PluginBase.CurrentProject;
             if (project == null) return;
@@ -38,6 +37,15 @@ namespace PostfixCodeCompletion.Completion
             settings.CompletionModeChanged -= OnHaxeCompletionModeChanged;
             settings.CompletionModeChanged += OnHaxeCompletionModeChanged;
             OnHaxeCompletionModeChanged();
+        }
+
+        public static void Stop()
+        {
+            completionModeHandler?.Stop();
+            completionModeHandler = null;
+            var completionList = Reflector.CompletionList.CompletionList;
+            completionList.VisibleChanged -= OnCompletionListVisibleChanged;
+            completionList.SelectedValueChanged -= OnCompletionListSelectedValueChanged;
         }
 
         internal static bool OnShortcut(Keys keys)
@@ -83,10 +91,10 @@ namespace PostfixCodeCompletion.Completion
                 UpdateCompletionList(target, expr);
                 return;
             }
-            if (expr.Context == null || CompletionModeHandler == null) return;
+            if (expr.Context == null || completionModeHandler == null) return;
             var sci = PluginBase.MainForm.CurrentDocument.SciControl;
             if (sci.ConfigurationLanguage.ToLower() != "haxe" || sci.CharAt(expr.Context.Position) != '.') return;
-            var hc = new HaxeComplete(sci, expr, false, CompletionModeHandler, HaxeCompilerService.Type);
+            var hc = new HaxeComplete(sci, expr, false, completionModeHandler, HaxeCompilerService.Type);
             hc.GetPositionType(OnFunctionTypeResult);
         }
 
@@ -146,7 +154,7 @@ namespace PostfixCodeCompletion.Completion
             return result;
         }
 
-        internal static void OnCompletionListVisibleChanged(object o, EventArgs args)
+        static void OnCompletionListVisibleChanged(object o, EventArgs args)
         {
             var list = Reflector.CompletionList.CompletionList;
             if (list.Visible) UpdateCompletionList();
@@ -160,12 +168,12 @@ namespace PostfixCodeCompletion.Completion
             if (completionListItemCount != list.Items.Count) UpdateCompletionList();
         }
 
-        internal static void OnHaxeCompletionModeChanged()
+        static void OnHaxeCompletionModeChanged()
         {
-            if (CompletionModeHandler != null)
+            if (completionModeHandler != null)
             {
-                CompletionModeHandler.Stop();
-                CompletionModeHandler = null;
+                completionModeHandler.Stop();
+                completionModeHandler = null;
             }
             if (!(PluginBase.CurrentProject is HaxeProject)) return;
             var settings = (HaXeSettings)((Context)ASContext.GetLanguageContext("haxe")).Settings;
@@ -174,18 +182,18 @@ namespace PostfixCodeCompletion.Completion
             switch (settings.CompletionMode)
             {
                 case HaxeCompletionModeEnum.CompletionServer:
-                    if (settings.CompletionServerPort < 1024) CompletionModeHandler = new CompilerCompletionHandler(CreateHaxeProcess(string.Empty));
+                    if (settings.CompletionServerPort < 1024) completionModeHandler = new CompilerCompletionHandler(CreateHaxeProcess(string.Empty));
                     else
                     {
-                        CompletionModeHandler = new CompletionServerCompletionHandler(
+                        completionModeHandler = new CompletionServerCompletionHandler(
                             CreateHaxeProcess($"--wait {settings.CompletionServerPort}"),
                             settings.CompletionServerPort
                         );
-                        ((CompletionServerCompletionHandler)CompletionModeHandler).FallbackNeeded += OnHaxeContextFallbackNeeded;
+                        ((CompletionServerCompletionHandler)completionModeHandler).FallbackNeeded += OnHaxeContextFallbackNeeded;
                     }
                     break;
                 default:
-                    CompletionModeHandler = new CompilerCompletionHandler(CreateHaxeProcess(string.Empty));
+                    completionModeHandler = new CompilerCompletionHandler(CreateHaxeProcess(string.Empty));
                     break;
             }
         }
@@ -193,8 +201,8 @@ namespace PostfixCodeCompletion.Completion
         static void OnHaxeContextFallbackNeeded(bool notSupported)
         {
             TraceManager.AddAsync("PCC: This SDK does not support server mode");
-            CompletionModeHandler?.Stop();
-            CompletionModeHandler = new CompilerCompletionHandler(CreateHaxeProcess(string.Empty));
+            completionModeHandler?.Stop();
+            completionModeHandler = new CompilerCompletionHandler(CreateHaxeProcess(string.Empty));
         }
 
         static void OnFunctionTypeResult(HaxeComplete hc, HaxeCompleteResult result, HaxeCompleteStatus status)
