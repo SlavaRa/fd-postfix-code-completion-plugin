@@ -61,6 +61,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Completion\CompilerCompletionHandler.cs" />
+    <Compile Include="Completion\Complete.cs" />
     <Compile Include="Completion\CompletionServerCompletionHandler.cs" />
     <Compile Include="Completion\HaxeComplete.cs" />
     <Compile Include="Helpers\Reflector.cs" />
