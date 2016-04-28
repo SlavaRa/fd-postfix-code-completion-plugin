@@ -66,7 +66,7 @@ namespace PostfixCodeCompletion
             {
                 case EventType.Command:
                     if (((DataEvent) e).Action == ProjectManagerEvents.Project) Complete.Restart();
-                    return;
+                    break;
                 case EventType.Keys:
                     e.Handled = Complete.OnShortcut(((KeyEvent) e).Value);
                     break;
