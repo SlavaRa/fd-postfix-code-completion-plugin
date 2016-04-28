@@ -80,7 +80,7 @@ namespace PostfixCodeCompletion.Completion
 
         public virtual bool OnCharAdded(int value) => false;
 
-        public virtual void UpdateCompletionList() { }
+        public virtual void UpdateCompletionList() => UpdateCompletionList(CompletionHelper.GetCurrentCompletionExpr());
 
         public virtual bool UpdateCompletionList(ASResult expr) => false;
 
@@ -138,8 +138,6 @@ namespace PostfixCodeCompletion.Completion
             return true;
         }
 
-        public override void UpdateCompletionList() => UpdateCompletionList(CompletionHelper.GetCurrentCompletionExpr());
-
         public override bool UpdateCompletionList(ASResult expr)
         {
             if (expr == null || expr.IsNull()) return false;
@@ -184,14 +182,14 @@ namespace PostfixCodeCompletion.Completion
             list.SelectedValueChanged += OnCompletionListSelectedValueChanged;
         }
 
-        protected virtual void OnCompletionListVisibleChanged(object o, EventArgs args)
+        protected void OnCompletionListVisibleChanged(object o, EventArgs args)
         {
             var list = Reflector.CompletionList.CompletionList;
             if (list.Visible) UpdateCompletionList();
             else list.SelectedValueChanged -= OnCompletionListSelectedValueChanged;
         }
 
-        protected virtual void OnCompletionListSelectedValueChanged(object sender, EventArgs args)
+        protected void OnCompletionListSelectedValueChanged(object sender, EventArgs args)
         {
             var list = Reflector.CompletionList.CompletionList;
             list.SelectedValueChanged -= OnCompletionListSelectedValueChanged;
