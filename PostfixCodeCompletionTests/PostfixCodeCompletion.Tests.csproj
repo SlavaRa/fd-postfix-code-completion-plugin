@@ -49,7 +49,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Completion\PostfixCodeCompletionCompleteTests.cs" />
+    <Compile Include="Completion\CompleteTests.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -58,6 +58,39 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <EmbeddedResource Include="Test Snippets\as3\postfixgenerator\const.fds" />
+    <EmbeddedResource Include="Test Snippets\as3\postfixgenerator\constructor.fds" />
+    <EmbeddedResource Include="Test Snippets\as3\postfixgenerator\dowhile.fds" />
+    <EmbeddedResource Include="Test Snippets\as3\postfixgenerator\else.fds" />
+    <EmbeddedResource Include="Test Snippets\as3\postfixgenerator\for.fds" />
+    <EmbeddedResource Include="Test Snippets\as3\postfixgenerator\foreach.fds" />
+    <EmbeddedResource Include="Test Snippets\as3\postfixgenerator\forin.fds" />
+    <EmbeddedResource Include="Test Snippets\as3\postfixgenerator\forr.fds" />
+    <EmbeddedResource Include="Test Snippets\as3\postfixgenerator\if.fds" />
+    <EmbeddedResource Include="Test Snippets\as3\postfixgenerator\new.fds" />
+    <EmbeddedResource Include="Test Snippets\as3\postfixgenerator\not.fds" />
+    <EmbeddedResource Include="Test Snippets\as3\postfixgenerator\notnull.fds" />
+    <EmbeddedResource Include="Test Snippets\as3\postfixgenerator\null.fds" />
+    <EmbeddedResource Include="Test Snippets\as3\postfixgenerator\par.fds" />
+    <EmbeddedResource Include="Test Snippets\as3\postfixgenerator\return.fds" />
+    <EmbeddedResource Include="Test Snippets\as3\postfixgenerator\sel.fds" />
+    <EmbeddedResource Include="Test Snippets\as3\postfixgenerator\var.fds" />
+    <EmbeddedResource Include="Test Snippets\as3\postfixgenerator\while.fds" />
+    <EmbeddedResource Include="Test Snippets\haxe\postfixgenerator\code.fds" />
+    <EmbeddedResource Include="Test Snippets\haxe\postfixgenerator\dowhile.fds" />
+    <EmbeddedResource Include="Test Snippets\haxe\postfixgenerator\else.fds" />
+    <EmbeddedResource Include="Test Snippets\haxe\postfixgenerator\for.fds" />
+    <EmbeddedResource Include="Test Snippets\haxe\postfixgenerator\foreach.fds" />
+    <EmbeddedResource Include="Test Snippets\haxe\postfixgenerator\if.fds" />
+    <EmbeddedResource Include="Test Snippets\haxe\postfixgenerator\new.fds" />
+    <EmbeddedResource Include="Test Snippets\haxe\postfixgenerator\not.fds" />
+    <EmbeddedResource Include="Test Snippets\haxe\postfixgenerator\notnull.fds" />
+    <EmbeddedResource Include="Test Snippets\haxe\postfixgenerator\null.fds" />
+    <EmbeddedResource Include="Test Snippets\haxe\postfixgenerator\par.fds" />
+    <EmbeddedResource Include="Test Snippets\haxe\postfixgenerator\return.fds" />
+    <EmbeddedResource Include="Test Snippets\haxe\postfixgenerator\sel.fds" />
+    <EmbeddedResource Include="Test Snippets\haxe\postfixgenerator\var.fds" />
+    <EmbeddedResource Include="Test Snippets\haxe\postfixgenerator\while.fds" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Test Files\" />
