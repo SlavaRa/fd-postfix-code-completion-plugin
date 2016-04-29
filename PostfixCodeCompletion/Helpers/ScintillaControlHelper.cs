@@ -88,17 +88,16 @@ namespace PostfixCodeCompletion.Helpers
         }
     }
 
-    internal class CompletionHelper
+    internal class CompleteHelper
     {
         internal static Settings Settings { private get; set; }
 
-        internal static ASResult GetCurrentCompletionExpr()
+        internal static ASResult GetCurrentExpressionType()
         {
             var doc = PluginBase.MainForm.CurrentDocument;
-            if (doc == null || !doc.IsEditable) return null;
-            var language = PluginBase.CurrentProject.Language;
-            if (!ASContext.GetLanguageContext(language).IsFileValid || !TemplateUtils.GetHasTemplates(language)) return null;
+            if (doc == null || !ASContext.Context.IsFileValid) return null;
             var sci = doc.SciControl;
+            var language = sci.ConfigurationLanguage;
             if (sci.PositionIsOnComment(sci.CurrentPos)) return null;
             var currentLine = sci.CurrentLine;
             var positionFromLine = sci.LineIndentPosition(currentLine);

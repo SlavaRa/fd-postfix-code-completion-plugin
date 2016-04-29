@@ -80,7 +80,7 @@ namespace PostfixCodeCompletion.Completion
 
         public virtual bool OnCharAdded(int value) => false;
 
-        public virtual void UpdateCompletionList() => UpdateCompletionList(CompletionHelper.GetCurrentCompletionExpr());
+        public virtual void UpdateCompletionList() => UpdateCompletionList(CompleteHelper.GetCurrentExpressionType());
 
         public virtual bool UpdateCompletionList(ASResult expr) => false;
 
@@ -110,7 +110,7 @@ namespace PostfixCodeCompletion.Completion
             if (keys != (Keys.Control | Keys.Space)) return false;
             var completionList = Reflector.CompletionList.CompletionList;
             if (CompletionList.Active) return false;
-            var expr = CompletionHelper.GetCurrentCompletionExpr();
+            var expr = CompleteHelper.GetCurrentExpressionType();
             if (expr == null || expr.IsNull()) return false;
             var result = ASComplete.OnShortcut(keys, PluginBase.MainForm.CurrentDocument.SciControl);
             completionList.VisibleChanged -= OnCompletionListVisibleChanged;
@@ -130,7 +130,7 @@ namespace PostfixCodeCompletion.Completion
                 return false;
             }
             if (!Reflector.ASComplete.HandleDotCompletion(sci, true) || CompletionList.Active) return false;
-            var expr = CompletionHelper.GetCurrentCompletionExpr();
+            var expr = CompleteHelper.GetCurrentExpressionType();
             if (expr == null || expr.IsNull()) return false;
             Reflector.CompletionList.CompletionList.VisibleChanged -= OnCompletionListVisibleChanged;
             UpdateCompletionList(expr);
@@ -141,7 +141,7 @@ namespace PostfixCodeCompletion.Completion
         public override bool UpdateCompletionList(ASResult expr)
         {
             if (expr == null || expr.IsNull()) return false;
-            var target = CompletionHelper.GetCompletionTarget(expr);
+            var target = CompleteHelper.GetCompletionTarget(expr);
             if (target == null) return false;
             UpdateCompletionList(target, expr);
             return true;
@@ -150,7 +150,7 @@ namespace PostfixCodeCompletion.Completion
         public override void UpdateCompletionList(MemberModel target, ASResult expr)
         {
             if (target == null || !TemplateUtils.GetHasTemplates()) return;
-            var items = CompletionHelper.GetCompletionItems(target, expr);
+            var items = CompleteHelper.GetCompletionItems(target, expr);
             var allItems = Reflector.CompletionList.AllItems;
             if (allItems != null)
             {

@@ -41,7 +41,7 @@ namespace PostfixCodeCompletion
             InitBasics();
             LoadSettings();
             TemplateUtils.Settings = (Settings)Settings;
-            CompletionHelper.Settings = (Settings)Settings;
+            CompleteHelper.Settings = (Settings)Settings;
             AddEventHandlers();
         }
 
