@@ -87,17 +87,44 @@ namespace PostfixCodeCompletion.Completion
                 ASContext.Context = Substitute.For<IASContext>();
                 Sci = GetBaseScintillaControl();
                 doc.SciControl.Returns(Sci);
+                Helpers.TemplateUtils.Settings = new Settings();
+            }
+
+            protected string Generate(string sourceText, ClassModel type, string template)
+            {
+                Sci.Text = sourceText;
+                SnippetHelper.PostProcessSnippets(Sci, 0);
+                var context = new AS3Context.Context(new AS3Settings());
+                ASContext.Context.Features.Returns(context.Features);
+                ASContext.Context.IsFileValid.Returns(true);
+                var currentModel = new FileModel { Context = ASContext.Context };
+                new ASFileParser().ParseSrc(currentModel, Sci.Text);
+                var currentClass = currentModel.Classes[0];
+                ASContext.Context.CurrentClass.Returns(currentClass);
+                ASContext.Context.CurrentModel.Returns(currentModel);
+                ASContext.Context.CurrentMember.Returns(currentClass.Members[0]);
+                ASContext.Context.GetVisibleExternalElements().Returns(x => context.GetVisibleExternalElements());
+                ASContext.Context.GetCodeModel(null).ReturnsForAnyArgs(x =>
+                {
+                    var src = x[0] as string;
+                    return string.IsNullOrEmpty(src) ? null : context.GetCodeModel(src);
+                });
+                ASContext.Context.ResolveType(null, null).ReturnsForAnyArgs(type);
+                ASContext.Context
+                    .When(x => x.ResolveTopLevelElement(Arg.Any<string>(), Arg.Any<ASResult>()))
+                    .Do(x =>
+                    {
+                        var result = x.ArgAt<ASResult>(1);
+                        result.Type = type;
+                    });
+                var expr = Helpers.CompleteHelper.GetCurrentExpressionType();
+                Helpers.TemplateUtils.InsertSnippetText(expr, template, Helpers.TemplateUtils.PatternMember);
+                return Sci.Text;
             }
 
             [TestFixture]
             public class GenerateConstTests : GeneratorJob
             {
-                [TestFixtureSetUp]
-                public void GenerateTestsSetup()
-                {
-                    Helpers.TemplateUtils.Settings = new Settings();
-                }
-
                 public IEnumerable<TestCaseData> AS3TestCases
                 {
                     get
@@ -207,35 +234,125 @@ namespace PostfixCodeCompletion.Completion
                 [Test, TestCaseSource("AS3TestCases")]
                 public string AS3(string sourceText, ClassModel type, string template)
                 {
-                    Sci.Text = sourceText;
                     Sci.ConfigurationLanguage = "as3";
-                    SnippetHelper.PostProcessSnippets(Sci, 0);
-                    var context = new AS3Context.Context(new AS3Settings());
-                    ASContext.Context.Features.Returns(context.Features);
-                    ASContext.Context.IsFileValid.Returns(true);
-                    var currentModel = new FileModel {Context = ASContext.Context};
-                    new ASFileParser().ParseSrc(currentModel, Sci.Text);
-                    var currentClass = currentModel.Classes[0];
-                    ASContext.Context.CurrentClass.Returns(currentClass);
-                    ASContext.Context.CurrentModel.Returns(currentModel);
-                    ASContext.Context.CurrentMember.Returns(currentClass.Members[0]);
-                    ASContext.Context.GetVisibleExternalElements().Returns(x => context.GetVisibleExternalElements());
-                    ASContext.Context.GetCodeModel(null).ReturnsForAnyArgs(x =>
+                    return Generate(sourceText, type, template);
+                }
+            }
+
+            [TestFixture]
+            public class GenerateVarTests : GeneratorJob
+            {
+                public IEnumerable<TestCaseData> AS3TestCases
+                {
+                    get
                     {
-                        var src = x[0] as string;
-                        return string.IsNullOrEmpty(src) ? null : context.GetCodeModel(src);
-                    });
-                    ASContext.Context.ResolveType(null, null).ReturnsForAnyArgs(type);
-                    ASContext.Context
-                        .When(x => x.ResolveTopLevelElement(Arg.Any<string>(), Arg.Any<ASResult>()))
-                        .Do(x =>
-                        {
-                            var result = x.ArgAt<ASResult>(1);
-                            result.Type = type;
-                        });
-                    var expr = Helpers.CompleteHelper.GetCurrentExpressionType();
-                    Helpers.TemplateUtils.InsertSnippetText(expr, template, Helpers.TemplateUtils.PatternMember);
-                    return Sci.Text;
+                        yield return
+                            new TestCaseData(
+                                TestFile.ReadAllText(
+                                    "PostfixCodeCompletion.Test_Files.generated.as3.BeforeGenerateVar_fromString.as"),
+                                new ClassModel { InFile = new FileModel(), Name = "String", Type = "String" },
+                                TestFile.ReadAllText(
+                                    "PostfixCodeCompletion.Test_Snippets.as3.postfixgenerator.var.fds"))
+                                .Returns(
+                                    TestFile.ReadAllText(
+                                        "PostfixCodeCompletion.Test_Files.generated.as3.AfterGenerateVar_fromString.as"))
+                                .SetName("Generate var from \"\".|");
+                        yield return
+                            new TestCaseData(
+                                TestFile.ReadAllText(
+                                    "PostfixCodeCompletion.Test_Files.generated.as3.BeforeGenerateVar_fromUInt.as"),
+                                new ClassModel { InFile = new FileModel(), Name = "Number", Type = "Number" },
+                                TestFile.ReadAllText(
+                                    "PostfixCodeCompletion.Test_Snippets.as3.postfixgenerator.var.fds"))
+                                .Returns(
+                                    TestFile.ReadAllText(
+                                        "PostfixCodeCompletion.Test_Files.generated.as3.AfterGenerateVar_fromUInt.as"))
+                                .SetName("Generate var from 1.|");
+                        yield return
+                            new TestCaseData(
+                                TestFile.ReadAllText(
+                                    "PostfixCodeCompletion.Test_Files.generated.as3.BeforeGenerateVar_fromNumber.as"),
+                                new ClassModel { InFile = new FileModel(), Name = "Number", Type = "Number" },
+                                TestFile.ReadAllText(
+                                    "PostfixCodeCompletion.Test_Snippets.as3.postfixgenerator.var.fds"))
+                                .Returns(
+                                    TestFile.ReadAllText(
+                                        "PostfixCodeCompletion.Test_Files.generated.as3.AfterGenerateVar_fromNumber.as"))
+                                .SetName("Generate var from 10.0.|");
+                        yield return
+                            new TestCaseData(
+                                TestFile.ReadAllText(
+                                    "PostfixCodeCompletion.Test_Files.generated.as3.BeforeGenerateVar_fromInt.as"),
+                                new ClassModel { InFile = new FileModel(), Name = "Number", Type = "Number" },
+                                TestFile.ReadAllText(
+                                    "PostfixCodeCompletion.Test_Snippets.as3.postfixgenerator.var.fds"))
+                                .Returns(
+                                    TestFile.ReadAllText(
+                                        "PostfixCodeCompletion.Test_Files.generated.as3.AfterGenerateVar_fromInt.as"))
+                                .SetName("Generate var from -1.|");
+                        yield return
+                            new TestCaseData(
+                                TestFile.ReadAllText(
+                                    "PostfixCodeCompletion.Test_Files.generated.as3.BeforeGenerateVar_fromArray.as"),
+                                new ClassModel { InFile = new FileModel(), Name = "Array", Type = "Array" },
+                                TestFile.ReadAllText(
+                                    "PostfixCodeCompletion.Test_Snippets.as3.postfixgenerator.var.fds"))
+                                .Returns(
+                                    TestFile.ReadAllText(
+                                        "PostfixCodeCompletion.Test_Files.generated.as3.AfterGenerateVar_fromArray.as"))
+                                .SetName("Generate var from [].|");
+                        yield return
+                            new TestCaseData(
+                                TestFile.ReadAllText(
+                                    "PostfixCodeCompletion.Test_Files.generated.as3.BeforeGenerateVar_fromObject.as"),
+                                new ClassModel { InFile = new FileModel(), Name = "Object", Type = "Object" },
+                                TestFile.ReadAllText(
+                                    "PostfixCodeCompletion.Test_Snippets.as3.postfixgenerator.var.fds"))
+                                .Returns(
+                                    TestFile.ReadAllText(
+                                        "PostfixCodeCompletion.Test_Files.generated.as3.AfterGenerateVar_fromObject.as"))
+                                .SetName("Generate var from {}.|");
+                        yield return
+                            new TestCaseData(
+                                TestFile.ReadAllText(
+                                    "PostfixCodeCompletion.Test_Files.generated.as3.BeforeGenerateVar_fromNewObject.as"),
+                                new ClassModel { InFile = new FileModel(), Name = "Object", Type = "Object" },
+                                TestFile.ReadAllText(
+                                    "PostfixCodeCompletion.Test_Snippets.as3.postfixgenerator.var.fds"))
+                                .Returns(
+                                    TestFile.ReadAllText(
+                                        "PostfixCodeCompletion.Test_Files.generated.as3.AfterGenerateVar_fromNewObject.as"))
+                                .SetName("Generate var from new Object().|");
+                        yield return
+                            new TestCaseData(
+                                TestFile.ReadAllText(
+                                    "PostfixCodeCompletion.Test_Files.generated.as3.BeforeGenerateVar_fromNewVectorInt.as"),
+                                new ClassModel { InFile = new FileModel(), Name = "Vector.<int>", Type = "Vector.<int>" },
+                                TestFile.ReadAllText(
+                                    "PostfixCodeCompletion.Test_Snippets.as3.postfixgenerator.var.fds"))
+                                .Returns(
+                                    TestFile.ReadAllText(
+                                        "PostfixCodeCompletion.Test_Files.generated.as3.AfterGenerateVar_fromNewVectorInt.as"))
+                                .SetName("Generate var from new Vector.<int>().|");
+                        yield return
+                            new TestCaseData(
+                                TestFile.ReadAllText(
+                                    "PostfixCodeCompletion.Test_Files.generated.as3.BeforeGenerateVar_fromNewVectorInt_short.as"),
+                                new ClassModel { InFile = new FileModel(), Name = "Vector.<int>", Type = "Vector.<int>" },
+                                TestFile.ReadAllText(
+                                    "PostfixCodeCompletion.Test_Snippets.as3.postfixgenerator.var.fds"))
+                                .Returns(
+                                    TestFile.ReadAllText(
+                                        "PostfixCodeCompletion.Test_Files.generated.as3.AfterGenerateVar_fromNewVectorInt_short.as"))
+                                .SetName("Generate var from new <int>[].|");
+                    }
+                }
+
+                [Test, TestCaseSource("AS3TestCases")]
+                public string AS3(string sourceText, ClassModel type, string template)
+                {
+                    Sci.ConfigurationLanguage = "as3";
+                    return Generate(sourceText, type, template);
                 }
             }
         }
