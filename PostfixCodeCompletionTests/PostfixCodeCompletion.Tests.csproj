@@ -94,7 +94,6 @@
     <EmbeddedResource Include="Test Snippets\haxe\postfixgenerator\var.fds" />
     <EmbeddedResource Include="Test Snippets\haxe\postfixgenerator\while.fds" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateConst_fromString.as" />
-    <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateConst_fromString.as" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateConst_fromUInt.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateConst_fromUInt.as" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateConst_fromNumber.as" />
@@ -112,7 +111,6 @@
     <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateConst_fromNewVectorInt_short.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateConst_fromNewVectorInt_short.as" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateVar_fromUInt.as" />
-    <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateVar_fromString.as" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateVar_fromObject.as" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateVar_fromNumber.as" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateVar_fromNewVectorInt_short.as" />
@@ -129,6 +127,13 @@
     <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateVar_fromNewObject.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateVar_fromInt.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateVar_fromArray.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateConstructor_fromString.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateNotNull_fromString.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerate_fromString.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateNull_fromString.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterGeneratePar_fromString.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateSel_fromString.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateReturn_fromString.as" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
