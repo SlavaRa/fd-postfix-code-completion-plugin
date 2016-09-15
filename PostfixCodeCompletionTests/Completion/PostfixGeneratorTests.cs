@@ -7,7 +7,6 @@ using ASCompletion.Context;
 using ASCompletion.Model;
 using ASCompletion.Settings;
 using FlashDevelop;
-using FlashDevelop.Managers;
 using NSubstitute;
 using NUnit.Framework;
 using PluginCore;
@@ -40,7 +39,7 @@ namespace PostfixCodeCompletion.Completion
             mainForm.CurrentDocument = doc;
             mainForm.StandaloneMode = false;
             PluginBase.Initialize(mainForm);
-            ScintillaManager.LoadConfiguration();
+            FlashDevelop.Managers.ScintillaManager.LoadConfiguration();
         }
 
         [TestFixtureTearDown]
