@@ -1,4 +1,4 @@
-PostfixCodeCompletion plugin for [FlashDevelop](http://www.flashdevelop.org)
+PostfixCodeCompletion plugin for [FlashDevelop](http://www.flashdevelop.org)/[HaxeDevelop](http://www.haxedevelop.org)
 ========================
 [![Build status](https://ci.appveyor.com/api/projects/status/acnsq3sk2xboe3as?svg=true)](https://ci.appveyor.com/project/slavara/fd-postfix-code-completion-plugin)
 
@@ -7,7 +7,7 @@ Kind of surround templates on steroids baked with code completion.
 
 ## Minimum Requirements
 * [Last release FlashDevelop](http://www.flashdevelop.org/community/viewforum.php?f=11).
-* [Haxe 3.2.1](http://haxe.org/download/) or never for haxe projects.
+* [Haxe 3.2.1](http://haxe.org/download/) or higher - for Haxe projects
 
 ### Installation
 
@@ -38,9 +38,10 @@ Available templates for **AS3**:
 * `.while` – uses expression as loop condition `while (expr)`
 * `.dowhile` – uses expression as loop condition  `do{...} while(expr);`
 * `.sel` – selects expression in editor
+* `.trace` - surrounds expression with `trace(expr);`
 
 Available templates for **Haxe**:
-* `.code` - for String adds `code` to completion list
+* `.code` – for String adds `code` to completion list
 * `.if` – checks boolean expression to be true  `if (expr)`
 * `.else` – checks boolean expression to be false  `if (!expr)`
 * `.null` – checks nullable expression to be null `if (expr == null)`
@@ -56,7 +57,7 @@ Available templates for **Haxe**:
 * `.while` – uses expression as loop condition `while (expr)`
 * `.dowhile` – uses expression as loop condition `do{...} while(expr);`
 * `.sel` – selects expression in editor
-
+* `.trace` - surrounds expression with `trace(expr);`
 
 ## Как добавить сниппеты для постфиксного автокомплита самому?
 Сниппеты для постфиксного автокомплита представляют из себя улучшенный вид стандартных сниппетов и распологаются в `FlashDevelop\Snippets\Language\postfixgenerators`, также в настройках плагина можно подключить пользовательские директории.
@@ -101,7 +102,7 @@ for (var i:int = 0; i < expr; i++) {
 ```
 * для `flash.display.DisplayObjectContainer` и наследников:
 ```
-for (var i:int = expr.numChildren; i < expr; i++) {
+for (var i:int = expr.numChildren; i >= 0; i--) {
 	|
 }
 ```
