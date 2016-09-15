@@ -134,6 +134,8 @@
     <EmbeddedResource Include="Test Files\generated\as3\AfterGeneratePar_fromString.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateSel_fromString.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateReturn_fromString.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerate_fromBoolean.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateIf_fromBoolean.as" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

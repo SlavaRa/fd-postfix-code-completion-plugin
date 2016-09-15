@@ -96,13 +96,13 @@ namespace PostfixCodeCompletion.Completion
                 var context = new AS3Context.Context(new AS3Settings());
                 ASContext.Context.Features.Returns(context.Features);
                 ASContext.Context.IsFileValid.Returns(true);
-                var currentModel = new FileModel { Context = ASContext.Context };
+                var currentModel = new FileModel {Context = ASContext.Context};
                 new ASFileParser().ParseSrc(currentModel, Sci.Text);
                 var currentClass = currentModel.Classes[0];
                 ASContext.Context.CurrentClass.Returns(currentClass);
                 ASContext.Context.CurrentModel.Returns(currentModel);
                 ASContext.Context.CurrentMember.Returns(currentClass.Members[0]);
-                ASContext.Context.GetVisibleExternalElements().Returns(x => context.GetVisibleExternalElements());
+                ASContext.Context.GetVisibleExternalElements().Returns(_ => context.GetVisibleExternalElements());
                 ASContext.Context.GetCodeModel(null).ReturnsForAnyArgs(x =>
                 {
                     var src = x[0] as string;
@@ -568,6 +568,36 @@ namespace PostfixCodeCompletion.Completion
                                     TestFile.ReadAllText(
                                         "PostfixCodeCompletion.Test_Files.generated.as3.AfterGenerateReturn_fromString.as"))
                                 .SetName("Generate return from \"\".|");
+                    }
+                }
+
+                [Test, TestCaseSource("AS3TestCases")]
+                public string AS3(string sourceText, ClassModel type, string template, string pccpattern)
+                {
+                    Sci.ConfigurationLanguage = "as3";
+                    return Generate(sourceText, type, template, pccpattern);
+                }
+            }
+
+            [TestFixture]
+            public class GenerateIfTests : GeneratorJob
+            {
+                public IEnumerable<TestCaseData> AS3TestCases
+                {
+                    get
+                    {
+                        yield return
+                            new TestCaseData(
+                                    TestFile.ReadAllText(
+                                        "PostfixCodeCompletion.Test_Files.generated.as3.BeforeGenerate_fromBoolean.as"),
+                                    new ClassModel {InFile = new FileModel(), Name = "Boolean", Type = "Boolean"},
+                                    TestFile.ReadAllText(
+                                        "PostfixCodeCompletion.Test_Snippets.as3.postfixgenerator.if.fds"),
+                                    Helpers.TemplateUtils.PatternBool)
+                                .Returns(
+                                    TestFile.ReadAllText(
+                                        "PostfixCodeCompletion.Test_Files.generated.as3.AfterGenerateIf_fromBoolean.as"))
+                                .SetName("Generate if from true.|");
                     }
                 }
 
