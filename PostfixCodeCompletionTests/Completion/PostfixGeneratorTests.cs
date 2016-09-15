@@ -8,6 +8,7 @@ using ASCompletion.Model;
 using ASCompletion.Settings;
 using FlashDevelop;
 using NSubstitute;
+using NSubstitute.Core.Arguments;
 using NUnit.Framework;
 using PluginCore;
 using PluginCore.Helpers;
@@ -117,6 +118,10 @@ namespace PostfixCodeCompletion.Completion
                         result.Type = type;
                     });
                 var expr = Helpers.CompleteHelper.GetCurrentExpressionType();
+                var tmp = Helpers.TemplateUtils.GetTemplate(template, new[] {type.Type, pccpattern});
+                if (!string.IsNullOrEmpty(tmp)) template = tmp;
+                template = template.Replace("\r\n", "\n");
+                template = template.Replace("$(ItmUniqueVar)", ASComplete.FindFreeIterator(ASContext.Context, ASContext.Context.CurrentClass, new ASResult().Context));
                 Helpers.TemplateUtils.InsertSnippetText(expr, template, pccpattern);
                 return Sci.Text;
             }
@@ -425,7 +430,6 @@ namespace PostfixCodeCompletion.Completion
                 }
             }
 
-            [Ignore]
             [TestFixture]
             public class GenerateNotNullTests : GeneratorJob
             {
@@ -456,7 +460,6 @@ namespace PostfixCodeCompletion.Completion
                 }
             }
 
-            [Ignore]
             [TestFixture]
             public class GenerateNullTests : GeneratorJob
             {
@@ -598,6 +601,36 @@ namespace PostfixCodeCompletion.Completion
                                     TestFile.ReadAllText(
                                         "PostfixCodeCompletion.Test_Files.generated.as3.AfterGenerateIf_fromBoolean.as"))
                                 .SetName("Generate if from true.|");
+                    }
+                }
+
+                [Test, TestCaseSource("AS3TestCases")]
+                public string AS3(string sourceText, ClassModel type, string template, string pccpattern)
+                {
+                    Sci.ConfigurationLanguage = "as3";
+                    return Generate(sourceText, type, template, pccpattern);
+                }
+            }
+
+            [TestFixture]
+            public class GenerateForTests : GeneratorJob
+            {
+                public IEnumerable<TestCaseData> AS3TestCases
+                {
+                    get
+                    {
+                        yield return
+                            new TestCaseData(
+                                    TestFile.ReadAllText(
+                                        "PostfixCodeCompletion.Test_Files.generated.as3.BeforeGenerate_fromArray.as"),
+                                    new ClassModel {InFile = new FileModel(), Name = "Array", Type = "Array"},
+                                    TestFile.ReadAllText(
+                                        "PostfixCodeCompletion.Test_Snippets.as3.postfixgenerator.for.fds"),
+                                    Helpers.TemplateUtils.PatternCollection)
+                                .Returns(
+                                    TestFile.ReadAllText(
+                                        "PostfixCodeCompletion.Test_Files.generated.as3.AfterGenerateFor_fromArray.as"))
+                                .SetName("Generate for (var i = 0; i < array.length; i++) from array.|");
                     }
                 }
 
