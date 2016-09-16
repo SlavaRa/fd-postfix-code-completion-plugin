@@ -149,6 +149,9 @@
     <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateForeach_fromArrayAccess.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateForeach_fromObjectInitializer.as" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerate_fromObjectInitializer.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateForin_fromObjectInitializer.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateForin_fromObject.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateForin_fromDictionary.as" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
