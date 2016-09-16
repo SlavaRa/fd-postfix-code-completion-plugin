@@ -88,7 +88,7 @@ namespace PostfixCodeCompletion.Helpers
             }
             return string.Empty;
         }
-internal static string GetTemplate(string snippet, string type)
+        internal static string GetTemplate(string snippet, string type)
         {
             var marker = $"#pcc:{type}";
             var startIndex = snippet.IndexOfOrdinal(marker);
@@ -133,6 +133,19 @@ internal static string GetTemplate(string snippet, string type)
             if (string.IsNullOrEmpty(varname)) varname = Reflector.ASGenerator.GuessVarName(word, type);
             if (!string.IsNullOrEmpty(varname) && varname == word) varname = $"{varname}1";
             return new KeyValuePair<string, string>(varname, type);
+        }
+
+        internal static string ProcessTemplate(string pattern, string template, ASResult expr)
+        {
+            switch (pattern)
+            {
+                case TemplateUtils.PatternCollection:
+                    return TemplateUtils.ProcessCollectionTemplate(template, expr);
+                case TemplateUtils.PatternHash:
+                    return TemplateUtils.ProcessHashTemplate(template, expr);
+                default:
+                    return template;
+            }
         }
 
         internal static string ProcessMemberTemplate(string template, ASResult expr)

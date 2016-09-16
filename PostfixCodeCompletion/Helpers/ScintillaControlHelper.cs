@@ -167,16 +167,7 @@ namespace PostfixCodeCompletion.Helpers
             {
                 var fileName = Path.GetFileNameWithoutExtension(pathToTemplate.Key);
                 if (isHaxe && fileName == "code" && !haxeStringCode) continue;
-                var template = pathToTemplate.Value;
-                switch (pattern)
-                {
-                    case TemplateUtils.PatternCollection:
-                        template = TemplateUtils.ProcessCollectionTemplate(template, expr);
-                        break;
-                    case TemplateUtils.PatternHash:
-                        template = TemplateUtils.ProcessHashTemplate(template, expr);
-                        break;
-                }
+                var template = TemplateUtils.ProcessTemplate(pattern, pathToTemplate.Value, expr);
                 var item = new PostfixCompletionItem(fileName, template, expr) {Pattern = pattern};
                 if (isHaxe && fileName == "code" && itemIcon != null)
                 {
