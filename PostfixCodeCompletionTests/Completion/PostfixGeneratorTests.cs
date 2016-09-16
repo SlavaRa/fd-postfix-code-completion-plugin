@@ -6,71 +6,19 @@ using ASCompletion.Completion;
 using ASCompletion.Context;
 using ASCompletion.Model;
 using ASCompletion.Settings;
-using FlashDevelop;
 using NSubstitute;
 using NUnit.Framework;
-using PluginCore;
 using PluginCore.Helpers;
 using PostfixCodeCompletion.TestUtils;
-using ScintillaNet;
-using ScintillaNet.Enums;
 
 namespace PostfixCodeCompletion.Completion
 {
     [TestFixture]
-    internal class PostfixGeneratorTests
+    internal class PostfixGeneratorTests : TestBase
     {
-        MainForm mainForm;
-        ISettings settings;
-        ITabbedDocument doc;
-
-        [TestFixtureSetUp]
-        public void FixtureSetUp()
-        {
-            mainForm = new MainForm();
-            settings = Substitute.For<ISettings>();
-            settings.UseTabs = true;
-            settings.IndentSize = 4;
-            settings.SmartIndentType = SmartIndent.CPP;
-            settings.TabIndents = true;
-            settings.TabWidth = 4;
-            doc = Substitute.For<ITabbedDocument>();
-            mainForm.Settings = settings;
-            mainForm.CurrentDocument = doc;
-            mainForm.StandaloneMode = false;
-            PluginBase.Initialize(mainForm);
-            FlashDevelop.Managers.ScintillaManager.LoadConfiguration();
-        }
-
-        [TestFixtureTearDown]
-        public void FixtureTearDown()
-        {
-            settings = null;
-            doc = null;
-            mainForm.Dispose();
-            mainForm = null;
-        }
-
-        ScintillaControl GetBaseScintillaControl()
-        {
-            return new ScintillaControl
-            {
-                Encoding = System.Text.Encoding.UTF8,
-                CodePage = 65001,
-                Indent = settings.IndentSize,
-                Lexer = 3,
-                StyleBits = 7,
-                IsTabIndents = settings.TabIndents,
-                IsUseTabs = settings.UseTabs,
-                TabWidth = settings.TabWidth
-            };
-        }
-
         [TestFixture]
         public class GeneratorJob : PostfixGeneratorTests
         {
-            protected ScintillaControl Sci;
-
             [TestFixtureSetUp]
             public void GenerateJobSetup()
             {
@@ -84,8 +32,7 @@ namespace PostfixCodeCompletion.Completion
                 method.Invoke(null, new[] {pluginMain});
                 #endregion
                 ASContext.Context = Substitute.For<IASContext>();
-                Sci = GetBaseScintillaControl();
-                doc.SciControl.Returns(Sci);
+                CurrentDocument.SciControl.Returns(Sci);
                 Helpers.TemplateUtils.Settings = new Settings();
             }
 

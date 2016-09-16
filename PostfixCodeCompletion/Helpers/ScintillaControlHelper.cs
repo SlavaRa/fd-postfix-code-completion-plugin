@@ -16,14 +16,15 @@ namespace PostfixCodeCompletion.Helpers
     {
         internal static int GetExpressionStartPosition(ScintillaControl sci, int position, ASResult expr)
         {
-            var characters = ScintillaControl.Configuration.GetLanguage(sci.ConfigurationLanguage).characterclass.Characters;
             var result = 0;
+            var characters = ScintillaControl.Configuration.GetLanguage(sci.ConfigurationLanguage).characterclass.Characters;
             var arrCount = 0;
             var parCount = 0;
             var genCount = 0;
             var braCount = 0;
             var dQuotes = 0;
             var sQuotes = 0;
+            var hasDot = false;
             for (var i = position; i > 0; i--)
             {
                 var c = (char)sci.CharAt(i - 1);
@@ -52,8 +53,10 @@ namespace PostfixCodeCompletion.Helpers
                     result = i;
                     break;
                 }
+                else if (!hasDot && c == '.') hasDot = true;
             }
-            if (expr.Member == null && sci.GetWordLeft(result - 1, true) == "new")
+
+            if ((hasDot || expr.Member == null) && sci.GetWordLeft(result - 1, true) == "new")
                 result = sci.WordStartPosition(result - 1, false);
             return result;
         }
@@ -152,17 +155,22 @@ namespace PostfixCodeCompletion.Helpers
 
         internal static IEnumerable<ICompletionListItem> GetCompletionItems(Dictionary<string, string> templates, string pattern, ASResult expr)
         {
+            var result = new List<ICompletionListItem>();
+            if (templates.Count == 0) return result;
             var sci = PluginBase.MainForm.CurrentDocument.SciControl;
             Bitmap itemIcon = null;
             var haxeStringCode = false;
             var isHaxe = sci.ConfigurationLanguage.ToLower() == "haxe";
-            if (isHaxe && GetCompletionTarget(expr).Type == ASContext.Context.Features.stringKey)
+            if (isHaxe)
             {
-                var pos = ScintillaControlHelper.GetExpressionStartPosition(sci, sci.CurrentPos, expr);
-                haxeStringCode = sci.CharAt(pos) == '"' && sci.CharAt(pos + 1) != '\\' && sci.CharAt(pos + 2) == '"';
-                if (haxeStringCode) itemIcon = (Bitmap) ASContext.Panel.GetIcon(PluginUI.ICON_PROPERTY);
+                var target = GetCompletionTarget(expr);
+                if (target?.Type == ASContext.Context.Features.stringKey)
+                {
+                    var pos = ScintillaControlHelper.GetExpressionStartPosition(sci, sci.CurrentPos, expr);
+                    haxeStringCode = sci.CharAt(pos) == '"' && sci.CharAt(pos + 1) != '\\' && sci.CharAt(pos + 2) == '"';
+                    if (haxeStringCode) itemIcon = (Bitmap) ASContext.Panel.GetIcon(PluginUI.ICON_PROPERTY);
+                }
             }
-            var result = new List<ICompletionListItem>();
             foreach (var pathToTemplate in templates)
             {
                 var fileName = Path.GetFileNameWithoutExtension(pathToTemplate.Key);
