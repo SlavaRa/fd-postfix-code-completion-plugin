@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -98,7 +97,9 @@ namespace PostfixCodeCompletion.Helpers
                 snippet = snippet.Remove(0, startIndex);
             }
             startIndex = snippet.IndexOfOrdinal("#pcc:");
-            return startIndex != -1 ? snippet.Remove(startIndex) : string.Empty;
+            if (startIndex != -1) return snippet.Remove(startIndex);
+            if (snippet.Contains(type)) return snippet;
+            return string.Empty;
         }
 
         static string GetSnippet(string file)
@@ -139,10 +140,10 @@ namespace PostfixCodeCompletion.Helpers
         {
             switch (pattern)
             {
-                case TemplateUtils.PatternCollection:
-                    return TemplateUtils.ProcessCollectionTemplate(template, expr);
-                case TemplateUtils.PatternHash:
-                    return TemplateUtils.ProcessHashTemplate(template, expr);
+                case PatternCollection:
+                    return ProcessCollectionTemplate(template, expr);
+                case PatternHash:
+                    return ProcessHashTemplate(template, expr);
                 default:
                     return template;
             }
