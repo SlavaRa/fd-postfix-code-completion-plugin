@@ -124,6 +124,7 @@ namespace PostfixCodeCompletion.Completion
                 var tmp = Helpers.TemplateUtils.GetTemplate(template, new[] {type.Type, pccpattern});
                 if (!string.IsNullOrEmpty(tmp)) template = tmp;
                 template = template.Replace("$(ItmUniqueVar)", ASComplete.FindFreeIterator(ASContext.Context, ASContext.Context.CurrentClass, new ASResult().Context));
+                template = Helpers.TemplateUtils.ProcessCollectionTemplate(template, expr);
                 Helpers.TemplateUtils.InsertSnippetText(expr, template, pccpattern);
                 return ConvertWinNewlineToUnix(Sci.Text);
             }
@@ -557,6 +558,73 @@ namespace PostfixCodeCompletion.Completion
                     }
                 }
 
+                public IEnumerable<TestCaseData> Foreach
+                {
+                    get
+                    {
+                        yield return
+                            new TestCaseData(
+                                    ReadAllText(
+                                        "PostfixCodeCompletion.Test_Files.generated.as3.BeforeGenerate_fromArray.as"),
+                                    new ClassModel { InFile = new FileModel(), Name = "Array", Type = "Array" },
+                                    ReadAllText(
+                                        "PostfixCodeCompletion.Test_Snippets.as3.postfixgenerator.foreach.fds"),
+                                    Helpers.TemplateUtils.PatternCollection)
+                                .Returns(
+                                    ReadAllText(
+                                        "PostfixCodeCompletion.Test_Files.generated.as3.AfterGenerateForeach_fromArray.as"))
+                                .SetName("foreach from array.|");
+                        yield return
+                            new TestCaseData(
+                                    ReadAllText(
+                                        "PostfixCodeCompletion.Test_Files.generated.as3.BeforeGenerate_fromArrayAccess.as"),
+                                    new ClassModel { InFile = new FileModel(), Name = "Array", Type = "Array" },
+                                    ReadAllText(
+                                        "PostfixCodeCompletion.Test_Snippets.as3.postfixgenerator.foreach.fds"),
+                                    Helpers.TemplateUtils.PatternCollection)
+                                .Returns(
+                                    ReadAllText(
+                                        "PostfixCodeCompletion.Test_Files.generated.as3.AfterGenerateForeach_fromArrayAccess.as"))
+                                .SetName("foreach from [].|");
+                        yield return
+                            new TestCaseData(
+                                    ReadAllText(
+                                        "PostfixCodeCompletion.Test_Files.generated.as3.BeforeGenerate_fromObject.as"),
+                                    new ClassModel { InFile = new FileModel(), Name = "Object", Type = "Object" },
+                                    ReadAllText(
+                                        "PostfixCodeCompletion.Test_Snippets.as3.postfixgenerator.foreach.fds"),
+                                    Helpers.TemplateUtils.PatternCollection)
+                                .Returns(
+                                    ReadAllText(
+                                        "PostfixCodeCompletion.Test_Files.generated.as3.AfterGenerateForeach_fromObject.as"))
+                                .SetName("foreach from object.|");
+                        yield return
+                            new TestCaseData(
+                                    ReadAllText(
+                                        "PostfixCodeCompletion.Test_Files.generated.as3.BeforeGenerate_fromObjectInitializer.as"),
+                                    new ClassModel { InFile = new FileModel(), Name = "Object", Type = "Object" },
+                                    ReadAllText(
+                                        "PostfixCodeCompletion.Test_Snippets.as3.postfixgenerator.foreach.fds"),
+                                    Helpers.TemplateUtils.PatternCollection)
+                                .Returns(
+                                    ReadAllText(
+                                        "PostfixCodeCompletion.Test_Files.generated.as3.AfterGenerateForeach_fromObjectInitializer.as"))
+                                .SetName("foreach from {}.|");
+                        yield return
+                            new TestCaseData(
+                                    ReadAllText(
+                                        "PostfixCodeCompletion.Test_Files.generated.as3.BeforeGenerate_fromDictionary.as"),
+                                    new ClassModel { InFile = new FileModel(), Name = "Dictionary", Type = "flash.utils.Dictionary" },
+                                    ReadAllText(
+                                        "PostfixCodeCompletion.Test_Snippets.as3.postfixgenerator.foreach.fds"),
+                                    Helpers.TemplateUtils.PatternCollection)
+                                .Returns(
+                                    ReadAllText(
+                                        "PostfixCodeCompletion.Test_Files.generated.as3.AfterGenerateForeach_fromDictionary.as"))
+                                .SetName("foreach from dictionary.|");
+                    }
+                }
+
                 public IEnumerable<TestCaseData> For
                 {
                     get
@@ -577,7 +645,7 @@ namespace PostfixCodeCompletion.Completion
                 }
 
                 [Test, TestCaseSource("Const"), TestCaseSource("Var"), TestCaseSource("Constructor"), TestCaseSource("Notnull"), TestCaseSource("Null"), TestCaseSource("Par"), TestCaseSource("Return"),
-                       TestCaseSource("If"), TestCaseSource("Else"), TestCaseSource("Not"), TestCaseSource("For")]
+                       TestCaseSource("If"), TestCaseSource("Else"), TestCaseSource("Not"), TestCaseSource("Foreach"), TestCaseSource("For")]
                 public string AS3(string sourceText, ClassModel type, string template, string pccpattern) => Generate(sourceText, type, template, pccpattern);
             }
         }
