@@ -121,7 +121,7 @@ namespace PostfixCodeCompletion.Completion
                 if (!string.IsNullOrEmpty(tmp)) template = tmp;
                 template = template.Replace("$(ItmUniqueVar)", ASComplete.FindFreeIterator(ASContext.Context, ASContext.Context.CurrentClass, new ASResult().Context));
                 Helpers.TemplateUtils.InsertSnippetText(expr, template, pccpattern);
-                return Sci.Text;
+                return Sci.Text.Replace("\r\n", "\n");
             }
 
             [TestFixture]
