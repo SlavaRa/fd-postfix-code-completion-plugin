@@ -89,7 +89,7 @@ namespace PostfixCodeCompletion.Completion
                 Helpers.TemplateUtils.Settings = new Settings();
             }
 
-            string ReadAllText(string path) => TestFile.ReadAllText(path).Replace("\r\n", "\n");
+            static string ReadAllText(string path) => TestFile.ReadAllText(path).Replace("\r\n", "\n");
 
             protected string Generate(string sourceText, ClassModel type, string template, string pccpattern)
             {
