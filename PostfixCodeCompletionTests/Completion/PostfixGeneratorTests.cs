@@ -89,7 +89,9 @@ namespace PostfixCodeCompletion.Completion
                 Helpers.TemplateUtils.Settings = new Settings();
             }
 
-            static string ReadAllText(string path) => TestFile.ReadAllText(path).Replace("\r\n", "\n");
+            static string ConvertWinNewlineToUnix(string s) => s.Replace("\r\n", "\n");
+
+            static string ReadAllText(string path) => ConvertWinNewlineToUnix(TestFile.ReadAllText(path));
 
             protected string Generate(string sourceText, ClassModel type, string template, string pccpattern)
             {
@@ -121,10 +123,9 @@ namespace PostfixCodeCompletion.Completion
                 var expr = Helpers.CompleteHelper.GetCurrentExpressionType();
                 var tmp = Helpers.TemplateUtils.GetTemplate(template, new[] {type.Type, pccpattern});
                 if (!string.IsNullOrEmpty(tmp)) template = tmp;
-                //template = template.Replace("\r\n", "\n");
                 template = template.Replace("$(ItmUniqueVar)", ASComplete.FindFreeIterator(ASContext.Context, ASContext.Context.CurrentClass, new ASResult().Context));
                 Helpers.TemplateUtils.InsertSnippetText(expr, template, pccpattern);
-                return Sci.Text.Replace("\r\n", "\n");
+                return ConvertWinNewlineToUnix(Sci.Text);
             }
 
             [TestFixture]
@@ -518,6 +519,25 @@ namespace PostfixCodeCompletion.Completion
                     }
                 }
 
+                public IEnumerable<TestCaseData> Else
+                {
+                    get
+                    {
+                        yield return
+                            new TestCaseData(
+                                    ReadAllText(
+                                        "PostfixCodeCompletion.Test_Files.generated.as3.BeforeGenerate_fromBoolean.as"),
+                                    new ClassModel { InFile = new FileModel(), Name = "Boolean", Type = "Boolean" },
+                                    ReadAllText(
+                                        "PostfixCodeCompletion.Test_Snippets.as3.postfixgenerator.else.fds"),
+                                    Helpers.TemplateUtils.PatternBool)
+                                .Returns(
+                                    ReadAllText(
+                                        "PostfixCodeCompletion.Test_Files.generated.as3.AfterGenerateElse_fromBoolean.as"))
+                                .SetName("else from true.|");
+                    }
+                }
+
                 public IEnumerable<TestCaseData> For
                 {
                     get
@@ -537,8 +557,8 @@ namespace PostfixCodeCompletion.Completion
                     }
                 }
 
-                [Test, TestCaseSource("Const"), TestCaseSource("Var"), TestCaseSource("Constructor"), TestCaseSource("Notnull"), TestCaseSource("Null"), TestCaseSource("Par"), TestCaseSource("Return"), TestCaseSource("If"),
-                       TestCaseSource("For")]
+                [Test, TestCaseSource("Const"), TestCaseSource("Var"), TestCaseSource("Constructor"), TestCaseSource("Notnull"), TestCaseSource("Null"), TestCaseSource("Par"), TestCaseSource("Return"),
+                       TestCaseSource("If"), TestCaseSource("Else"), TestCaseSource("For")]
                 public string AS3(string sourceText, ClassModel type, string template, string pccpattern) => Generate(sourceText, type, template, pccpattern);
             }
         }
