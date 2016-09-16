@@ -89,6 +89,8 @@ namespace PostfixCodeCompletion.Completion
                 Helpers.TemplateUtils.Settings = new Settings();
             }
 
+            string ReadAllText(string path) => TestFile.ReadAllText(path).Replace("\r\n", "\n");
+
             protected string Generate(string sourceText, ClassModel type, string template, string pccpattern)
             {
                 Sci.Text = sourceText;
@@ -122,7 +124,7 @@ namespace PostfixCodeCompletion.Completion
                 //template = template.Replace("\r\n", "\n");
                 template = template.Replace("$(ItmUniqueVar)", ASComplete.FindFreeIterator(ASContext.Context, ASContext.Context.CurrentClass, new ASResult().Context));
                 Helpers.TemplateUtils.InsertSnippetText(expr, template, pccpattern);
-                return Sci.Text;//.Replace("\r\n", "\n");
+                return Sci.Text.Replace("\r\n", "\n");
             }
 
             [TestFixture]
@@ -137,92 +139,92 @@ namespace PostfixCodeCompletion.Completion
                     {
                         yield return
                             new TestCaseData(
-                                    TestFile.ReadAllText(
+                                    ReadAllText(
                                         "PostfixCodeCompletion.Test_Files.generated.as3.BeforeGenerate_fromString.as"),
                                     new ClassModel {InFile = new FileModel(), Name = "String", Type = "String"},
-                                    TestFile.ReadAllText(
+                                    ReadAllText(
                                         "PostfixCodeCompletion.Test_Snippets.as3.postfixgenerator.const.fds"),
                                     Helpers.TemplateUtils.PatternMember)
                                 .Returns(
-                                    TestFile.ReadAllText(
+                                    ReadAllText(
                                         "PostfixCodeCompletion.Test_Files.generated.as3.AfterGenerateConst_fromString.as"))
                                 .SetName("const from \"\".|");
                         yield return
                             new TestCaseData(
-                                    TestFile.ReadAllText(
+                                    ReadAllText(
                                         "PostfixCodeCompletion.Test_Files.generated.as3.BeforeGenerateConst_fromUInt.as"),
                                     new ClassModel {InFile = new FileModel(), Name = "Number", Type = "Number"},
-                                    TestFile.ReadAllText(
+                                    ReadAllText(
                                         "PostfixCodeCompletion.Test_Snippets.as3.postfixgenerator.const.fds"),
                                     Helpers.TemplateUtils.PatternMember)
                                 .Returns(
-                                    TestFile.ReadAllText(
+                                    ReadAllText(
                                         "PostfixCodeCompletion.Test_Files.generated.as3.AfterGenerateConst_fromUInt.as"))
                                 .SetName("const from 1.|");
                         yield return
                             new TestCaseData(
-                                    TestFile.ReadAllText(
+                                    ReadAllText(
                                         "PostfixCodeCompletion.Test_Files.generated.as3.BeforeGenerateConst_fromNumber.as"),
                                     new ClassModel {InFile = new FileModel(), Name = "Number", Type = "Number"},
-                                    TestFile.ReadAllText(
+                                    ReadAllText(
                                         "PostfixCodeCompletion.Test_Snippets.as3.postfixgenerator.const.fds"),
                                     Helpers.TemplateUtils.PatternMember)
                                 .Returns(
-                                    TestFile.ReadAllText(
+                                    ReadAllText(
                                         "PostfixCodeCompletion.Test_Files.generated.as3.AfterGenerateConst_fromNumber.as"))
                                 .SetName("const from 10.0.|");
                         /*yield return
                             new TestCaseData(
-                                    TestFile.ReadAllText(
+                                    ReadAllText(
                                         "PostfixCodeCompletion.Test_Files.generated.as3.BeforeGenerateConst_fromInt.as"),
                                     new ClassModel {InFile = new FileModel(), Name = "Number", Type = "Number"},
-                                    TestFile.ReadAllText(
+                                    ReadAllText(
                                         "PostfixCodeCompletion.Test_Snippets.as3.postfixgenerator.const.fds"),
                                     Helpers.TemplateUtils.PatternMember)
                                 .Returns(
-                                    TestFile.ReadAllText(
+                                    ReadAllText(
                                         "PostfixCodeCompletion.Test_Files.generated.as3.AfterGenerateConst_fromInt.as"))
                                 .SetName("const from -1.|")
                                 .Ignore();*/
                         yield return
                             new TestCaseData(
-                                    TestFile.ReadAllText(
+                                    ReadAllText(
                                         "PostfixCodeCompletion.Test_Files.generated.as3.BeforeGenerateConst_fromArray.as"),
                                     new ClassModel {InFile = new FileModel(), Name = "Array", Type = "Array"},
-                                    TestFile.ReadAllText(
+                                    ReadAllText(
                                         "PostfixCodeCompletion.Test_Snippets.as3.postfixgenerator.const.fds"),
                                     Helpers.TemplateUtils.PatternMember)
                                 .Returns(
-                                    TestFile.ReadAllText(
+                                    ReadAllText(
                                         "PostfixCodeCompletion.Test_Files.generated.as3.AfterGenerateConst_fromArray.as"))
                                 .SetName("const from [].|");
                         yield return
                             new TestCaseData(
-                                    TestFile.ReadAllText(
+                                    ReadAllText(
                                         "PostfixCodeCompletion.Test_Files.generated.as3.BeforeGenerateConst_fromObject.as"),
                                     new ClassModel {InFile = new FileModel(), Name = "Object", Type = "Object"},
-                                    TestFile.ReadAllText(
+                                    ReadAllText(
                                         "PostfixCodeCompletion.Test_Snippets.as3.postfixgenerator.const.fds"),
                                     Helpers.TemplateUtils.PatternMember)
                                 .Returns(
-                                    TestFile.ReadAllText(
+                                    ReadAllText(
                                         "PostfixCodeCompletion.Test_Files.generated.as3.AfterGenerateConst_fromObject.as"))
                                 .SetName("const from {}.|");
                         yield return
                             new TestCaseData(
-                                    TestFile.ReadAllText(
+                                    ReadAllText(
                                         "PostfixCodeCompletion.Test_Files.generated.as3.BeforeGenerateConst_fromNewObject.as"),
                                     new ClassModel {InFile = new FileModel(), Name = "Object", Type = "Object"},
-                                    TestFile.ReadAllText(
+                                    ReadAllText(
                                         "PostfixCodeCompletion.Test_Snippets.as3.postfixgenerator.const.fds"),
                                     Helpers.TemplateUtils.PatternMember)
                                 .Returns(
-                                    TestFile.ReadAllText(
+                                    ReadAllText(
                                         "PostfixCodeCompletion.Test_Files.generated.as3.AfterGenerateConst_fromNewObject.as"))
                                 .SetName("const from new Object().|");
                         yield return
                             new TestCaseData(
-                                    TestFile.ReadAllText(
+                                    ReadAllText(
                                         "PostfixCodeCompletion.Test_Files.generated.as3.BeforeGenerateConst_fromNewVectorInt.as"),
                                     new ClassModel
                                     {
@@ -230,16 +232,16 @@ namespace PostfixCodeCompletion.Completion
                                         Name = "Vector.<int>",
                                         Type = "Vector.<int>"
                                     },
-                                    TestFile.ReadAllText(
+                                    ReadAllText(
                                         "PostfixCodeCompletion.Test_Snippets.as3.postfixgenerator.const.fds"),
                                     Helpers.TemplateUtils.PatternMember)
                                 .Returns(
-                                    TestFile.ReadAllText(
+                                    ReadAllText(
                                         "PostfixCodeCompletion.Test_Files.generated.as3.AfterGenerateConst_fromNewVectorInt.as"))
                                 .SetName("const from new Vector.<int>().|");
                         yield return
                             new TestCaseData(
-                                    TestFile.ReadAllText(
+                                    ReadAllText(
                                         "PostfixCodeCompletion.Test_Files.generated.as3.BeforeGenerateConst_fromNewVectorInt_short.as"),
                                     new ClassModel
                                     {
@@ -247,11 +249,11 @@ namespace PostfixCodeCompletion.Completion
                                         Name = "Vector.<int>",
                                         Type = "Vector.<int>"
                                     },
-                                    TestFile.ReadAllText(
+                                    ReadAllText(
                                         "PostfixCodeCompletion.Test_Snippets.as3.postfixgenerator.const.fds"),
                                     Helpers.TemplateUtils.PatternMember)
                                 .Returns(
-                                    TestFile.ReadAllText(
+                                    ReadAllText(
                                         "PostfixCodeCompletion.Test_Files.generated.as3.AfterGenerateConst_fromNewVectorInt_short.as"))
                                 .SetName("const from new <int>[].|");
                     }
@@ -263,38 +265,38 @@ namespace PostfixCodeCompletion.Completion
                     {
                         yield return
                             new TestCaseData(
-                                    TestFile.ReadAllText(
+                                    ReadAllText(
                                         "PostfixCodeCompletion.Test_Files.generated.as3.BeforeGenerate_fromString.as"),
                                     new ClassModel { InFile = new FileModel(), Name = "String", Type = "String" },
-                                    TestFile.ReadAllText(
+                                    ReadAllText(
                                         "PostfixCodeCompletion.Test_Snippets.as3.postfixgenerator.var.fds"),
                                     Helpers.TemplateUtils.PatternMember)
                                 .Returns(
-                                    TestFile.ReadAllText(
+                                    ReadAllText(
                                         "PostfixCodeCompletion.Test_Files.generated.as3.AfterGenerateVar_fromString.as"))
                                 .SetName("var from \"\".|");
                         yield return
                             new TestCaseData(
-                                    TestFile.ReadAllText(
+                                    ReadAllText(
                                         "PostfixCodeCompletion.Test_Files.generated.as3.BeforeGenerateVar_fromUInt.as"),
                                     new ClassModel { InFile = new FileModel(), Name = "Number", Type = "Number" },
-                                    TestFile.ReadAllText(
+                                    ReadAllText(
                                         "PostfixCodeCompletion.Test_Snippets.as3.postfixgenerator.var.fds"),
                                     Helpers.TemplateUtils.PatternMember)
                                 .Returns(
-                                    TestFile.ReadAllText(
+                                    ReadAllText(
                                         "PostfixCodeCompletion.Test_Files.generated.as3.AfterGenerateVar_fromUInt.as"))
                                 .SetName("var from 1.|");
                         yield return
                             new TestCaseData(
-                                    TestFile.ReadAllText(
+                                    ReadAllText(
                                         "PostfixCodeCompletion.Test_Files.generated.as3.BeforeGenerateVar_fromNumber.as"),
                                     new ClassModel { InFile = new FileModel(), Name = "Number", Type = "Number" },
-                                    TestFile.ReadAllText(
+                                    ReadAllText(
                                         "PostfixCodeCompletion.Test_Snippets.as3.postfixgenerator.var.fds"),
                                     Helpers.TemplateUtils.PatternMember)
                                 .Returns(
-                                    TestFile.ReadAllText(
+                                    ReadAllText(
                                         "PostfixCodeCompletion.Test_Files.generated.as3.AfterGenerateVar_fromNumber.as"))
                                 .SetName("var from 10.0.|");
                         /*yield return
@@ -312,43 +314,43 @@ namespace PostfixCodeCompletion.Completion
                                 .Ignore();*/
                         yield return
                             new TestCaseData(
-                                    TestFile.ReadAllText(
+                                    ReadAllText(
                                         "PostfixCodeCompletion.Test_Files.generated.as3.BeforeGenerateVar_fromArray.as"),
                                     new ClassModel { InFile = new FileModel(), Name = "Array", Type = "Array" },
-                                    TestFile.ReadAllText(
+                                    ReadAllText(
                                         "PostfixCodeCompletion.Test_Snippets.as3.postfixgenerator.var.fds"),
                                     Helpers.TemplateUtils.PatternMember)
                                 .Returns(
-                                    TestFile.ReadAllText(
+                                    ReadAllText(
                                         "PostfixCodeCompletion.Test_Files.generated.as3.AfterGenerateVar_fromArray.as"))
                                 .SetName("var from [].|");
                         yield return
                             new TestCaseData(
-                                    TestFile.ReadAllText(
+                                    ReadAllText(
                                         "PostfixCodeCompletion.Test_Files.generated.as3.BeforeGenerateVar_fromObject.as"),
                                     new ClassModel { InFile = new FileModel(), Name = "Object", Type = "Object" },
-                                    TestFile.ReadAllText(
+                                    ReadAllText(
                                         "PostfixCodeCompletion.Test_Snippets.as3.postfixgenerator.var.fds"),
                                     Helpers.TemplateUtils.PatternMember)
                                 .Returns(
-                                    TestFile.ReadAllText(
+                                    ReadAllText(
                                         "PostfixCodeCompletion.Test_Files.generated.as3.AfterGenerateVar_fromObject.as"))
                                 .SetName("var from {}.|");
                         yield return
                             new TestCaseData(
-                                    TestFile.ReadAllText(
+                                    ReadAllText(
                                         "PostfixCodeCompletion.Test_Files.generated.as3.BeforeGenerateVar_fromNewObject.as"),
                                     new ClassModel { InFile = new FileModel(), Name = "Object", Type = "Object" },
-                                    TestFile.ReadAllText(
+                                    ReadAllText(
                                         "PostfixCodeCompletion.Test_Snippets.as3.postfixgenerator.var.fds"),
                                     Helpers.TemplateUtils.PatternMember)
                                 .Returns(
-                                    TestFile.ReadAllText(
+                                    ReadAllText(
                                         "PostfixCodeCompletion.Test_Files.generated.as3.AfterGenerateVar_fromNewObject.as"))
                                 .SetName("var from new Object().|");
                         yield return
                             new TestCaseData(
-                                    TestFile.ReadAllText(
+                                    ReadAllText(
                                         "PostfixCodeCompletion.Test_Files.generated.as3.BeforeGenerateVar_fromNewVectorInt.as"),
                                     new ClassModel
                                     {
@@ -356,16 +358,16 @@ namespace PostfixCodeCompletion.Completion
                                         Name = "Vector.<int>",
                                         Type = "Vector.<int>"
                                     },
-                                    TestFile.ReadAllText(
+                                    ReadAllText(
                                         "PostfixCodeCompletion.Test_Snippets.as3.postfixgenerator.var.fds"),
                                     Helpers.TemplateUtils.PatternMember)
                                 .Returns(
-                                    TestFile.ReadAllText(
+                                    ReadAllText(
                                         "PostfixCodeCompletion.Test_Files.generated.as3.AfterGenerateVar_fromNewVectorInt.as"))
                                 .SetName("var from new Vector.<int>().|");
                         yield return
                             new TestCaseData(
-                                    TestFile.ReadAllText(
+                                    ReadAllText(
                                         "PostfixCodeCompletion.Test_Files.generated.as3.BeforeGenerateVar_fromNewVectorInt_short.as"),
                                     new ClassModel
                                     {
@@ -373,11 +375,11 @@ namespace PostfixCodeCompletion.Completion
                                         Name = "Vector.<int>",
                                         Type = "Vector.<int>"
                                     },
-                                    TestFile.ReadAllText(
+                                    ReadAllText(
                                         "PostfixCodeCompletion.Test_Snippets.as3.postfixgenerator.var.fds"),
                                     Helpers.TemplateUtils.PatternMember)
                                 .Returns(
-                                    TestFile.ReadAllText(
+                                    ReadAllText(
                                         "PostfixCodeCompletion.Test_Files.generated.as3.AfterGenerateVar_fromNewVectorInt_short.as"))
                                 .SetName("var from new <int>[].|");
                     }
@@ -389,14 +391,14 @@ namespace PostfixCodeCompletion.Completion
                     {
                         yield return
                             new TestCaseData(
-                                    TestFile.ReadAllText(
+                                    ReadAllText(
                                         "PostfixCodeCompletion.Test_Files.generated.as3.BeforeGenerate_fromString.as"),
                                     new ClassModel { InFile = new FileModel(), Name = "String", Type = "String" },
-                                    TestFile.ReadAllText(
+                                    ReadAllText(
                                         "PostfixCodeCompletion.Test_Snippets.as3.postfixgenerator.constructor.fds"),
                                     Helpers.TemplateUtils.PatternMember)
                                 .Returns(
-                                    TestFile.ReadAllText(
+                                    ReadAllText(
                                         "PostfixCodeCompletion.Test_Files.generated.as3.AfterGenerateConstructor_fromString.as"))
                                 .SetName("constructor from \"\".|");
                     }
@@ -408,14 +410,14 @@ namespace PostfixCodeCompletion.Completion
                     {
                         yield return
                             new TestCaseData(
-                                    TestFile.ReadAllText(
+                                    ReadAllText(
                                         "PostfixCodeCompletion.Test_Files.generated.as3.BeforeGenerate_fromString.as"),
                                     new ClassModel { InFile = new FileModel(), Name = "String", Type = "String" },
-                                    TestFile.ReadAllText(
+                                    ReadAllText(
                                         "PostfixCodeCompletion.Test_Snippets.as3.postfixgenerator.notnull.fds"),
                                     Helpers.TemplateUtils.PatternNullable)
                                 .Returns(
-                                    TestFile.ReadAllText(
+                                    ReadAllText(
                                         "PostfixCodeCompletion.Test_Files.generated.as3.AfterGenerateNotNull_fromString.as"))
                                 .SetName("notnull from \"\".|");
                     }
@@ -427,14 +429,14 @@ namespace PostfixCodeCompletion.Completion
                     {
                         yield return
                             new TestCaseData(
-                                    TestFile.ReadAllText(
+                                    ReadAllText(
                                         "PostfixCodeCompletion.Test_Files.generated.as3.BeforeGenerate_fromString.as"),
                                     new ClassModel { InFile = new FileModel(), Name = "String", Type = "String" },
-                                    TestFile.ReadAllText(
+                                    ReadAllText(
                                         "PostfixCodeCompletion.Test_Snippets.as3.postfixgenerator.null.fds"),
                                     Helpers.TemplateUtils.PatternNullable)
                                 .Returns(
-                                    TestFile.ReadAllText(
+                                    ReadAllText(
                                         "PostfixCodeCompletion.Test_Files.generated.as3.AfterGenerateNull_fromString.as"))
                                 .SetName("null from \"\".|");
                     }
@@ -446,14 +448,14 @@ namespace PostfixCodeCompletion.Completion
                     {
                         yield return
                             new TestCaseData(
-                                    TestFile.ReadAllText(
+                                    ReadAllText(
                                         "PostfixCodeCompletion.Test_Files.generated.as3.BeforeGenerate_fromString.as"),
                                     new ClassModel { InFile = new FileModel(), Name = "String", Type = "String" },
-                                    TestFile.ReadAllText(
+                                    ReadAllText(
                                         "PostfixCodeCompletion.Test_Snippets.as3.postfixgenerator.par.fds"),
                                     Helpers.TemplateUtils.PatternMember)
                                 .Returns(
-                                    TestFile.ReadAllText(
+                                    ReadAllText(
                                         "PostfixCodeCompletion.Test_Files.generated.as3.AfterGeneratePar_fromString.as"))
                                 .SetName("par from \"\".|");
                     }
@@ -465,14 +467,14 @@ namespace PostfixCodeCompletion.Completion
                     {
                         yield return
                             new TestCaseData(
-                                    TestFile.ReadAllText(
+                                    ReadAllText(
                                         "PostfixCodeCompletion.Test_Files.generated.as3.BeforeGenerate_fromString.as"),
                                     new ClassModel { InFile = new FileModel(), Name = "String", Type = "String" },
-                                    TestFile.ReadAllText(
+                                    ReadAllText(
                                         "PostfixCodeCompletion.Test_Snippets.as3.postfixgenerator.sel.fds"),
                                     Helpers.TemplateUtils.PatternMember)
                                 .Returns(
-                                    TestFile.ReadAllText(
+                                    ReadAllText(
                                         "PostfixCodeCompletion.Test_Files.generated.as3.AfterGenerateSel_fromString.as"))
                                 .SetName("sel from \"\".|");
                     }
@@ -484,14 +486,14 @@ namespace PostfixCodeCompletion.Completion
                     {
                         yield return
                             new TestCaseData(
-                                    TestFile.ReadAllText(
+                                    ReadAllText(
                                         "PostfixCodeCompletion.Test_Files.generated.as3.BeforeGenerate_fromString.as"),
                                     new ClassModel { InFile = new FileModel(), Name = "String", Type = "String" },
-                                    TestFile.ReadAllText(
+                                    ReadAllText(
                                         "PostfixCodeCompletion.Test_Snippets.as3.postfixgenerator.return.fds"),
                                     Helpers.TemplateUtils.PatternMember)
                                 .Returns(
-                                    TestFile.ReadAllText(
+                                    ReadAllText(
                                         "PostfixCodeCompletion.Test_Files.generated.as3.AfterGenerateReturn_fromString.as"))
                                 .SetName("return from \"\".|");
                     }
@@ -503,14 +505,14 @@ namespace PostfixCodeCompletion.Completion
                     {
                         yield return
                             new TestCaseData(
-                                    TestFile.ReadAllText(
+                                    ReadAllText(
                                         "PostfixCodeCompletion.Test_Files.generated.as3.BeforeGenerate_fromBoolean.as"),
                                     new ClassModel { InFile = new FileModel(), Name = "Boolean", Type = "Boolean" },
-                                    TestFile.ReadAllText(
+                                    ReadAllText(
                                         "PostfixCodeCompletion.Test_Snippets.as3.postfixgenerator.if.fds"),
                                     Helpers.TemplateUtils.PatternBool)
                                 .Returns(
-                                    TestFile.ReadAllText(
+                                    ReadAllText(
                                         "PostfixCodeCompletion.Test_Files.generated.as3.AfterGenerateIf_fromBoolean.as"))
                                 .SetName("if from true.|");
                     }
@@ -522,14 +524,14 @@ namespace PostfixCodeCompletion.Completion
                     {
                         yield return
                             new TestCaseData(
-                                    TestFile.ReadAllText(
+                                    ReadAllText(
                                         "PostfixCodeCompletion.Test_Files.generated.as3.BeforeGenerate_fromArray.as"),
                                     new ClassModel { InFile = new FileModel(), Name = "Array", Type = "Array" },
-                                    TestFile.ReadAllText(
+                                    ReadAllText(
                                         "PostfixCodeCompletion.Test_Snippets.as3.postfixgenerator.for.fds"),
                                     Helpers.TemplateUtils.PatternCollection)
                                 .Returns(
-                                    TestFile.ReadAllText(
+                                    ReadAllText(
                                         "PostfixCodeCompletion.Test_Files.generated.as3.AfterGenerateFor_fromArray.as"))
                                 .SetName("for from array.|");
                     }
