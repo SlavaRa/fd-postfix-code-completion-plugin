@@ -687,8 +687,40 @@ namespace PostfixCodeCompletion.Completion
                     }
                 }
 
+                public IEnumerable<TestCaseData> Forr
+                {
+                    get
+                    {
+                        yield return
+                            new TestCaseData(
+                                    ReadAllText(
+                                        "PostfixCodeCompletion.Test_Files.generated.as3.BeforeGenerate_fromArray.as"),
+                                    new ClassModel { InFile = new FileModel(), Name = "Array", Type = "Array" },
+                                    ReadAllText(
+                                        "PostfixCodeCompletion.Test_Snippets.as3.postfixgenerator.forr.fds"),
+                                    Helpers.TemplateUtils.PatternCollection)
+                                .Returns(
+                                    ReadAllText(
+                                        "PostfixCodeCompletion.Test_Files.generated.as3.AfterGenerateForr_fromArray.as"))
+                                .SetName("forr from array.|");
+                        yield return
+                            new TestCaseData(
+                                    ReadAllText(
+                                        "PostfixCodeCompletion.Test_Files.generated.as3.BeforeGenerate_fromArrayAccess.as"),
+                                    new ClassModel { InFile = new FileModel(), Name = "Array", Type = "Array" },
+                                    ReadAllText(
+                                        "PostfixCodeCompletion.Test_Snippets.as3.postfixgenerator.forr.fds"),
+                                    Helpers.TemplateUtils.PatternCollection)
+                                .Returns(
+                                    ReadAllText(
+                                        "PostfixCodeCompletion.Test_Files.generated.as3.AfterGenerateForr_fromArrayAccess.as"))
+                                .SetName("forr from [].|");
+                    }
+                }
+
                 [Test, TestCaseSource("Const"), TestCaseSource("Var"), TestCaseSource("Constructor"), TestCaseSource("Notnull"), TestCaseSource("Null"), TestCaseSource("Par"), TestCaseSource("Return"),
-                       TestCaseSource("If"), TestCaseSource("Else"), TestCaseSource("Not"), TestCaseSource("Foreach"), TestCaseSource("Forin"), TestCaseSource("For")]
+                       TestCaseSource("If"), TestCaseSource("Else"), TestCaseSource("Not"), 
+                       TestCaseSource("Foreach"), TestCaseSource("Forin"), TestCaseSource("For"), TestCaseSource("Forr")]
                 public string AS3(string sourceText, ClassModel type, string template, string pccpattern) => Generate(sourceText, type, template, pccpattern);
             }
         }

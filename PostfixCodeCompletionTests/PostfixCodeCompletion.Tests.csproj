@@ -152,6 +152,8 @@
     <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateForin_fromObjectInitializer.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateForin_fromObject.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateForin_fromDictionary.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateForr_fromArray.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateForr_fromArrayAccess.as" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
