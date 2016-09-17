@@ -96,9 +96,7 @@
     <EmbeddedResource Include="Test Snippets\haxe\postfixgenerator\var.fds" />
     <EmbeddedResource Include="Test Snippets\haxe\postfixgenerator\while.fds" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateConst_fromString.as" />
-    <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateConst_fromUInt.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateConst_fromUInt.as" />
-    <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateConst_fromNumber.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateConst_fromNumber.as" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateConst_fromInt.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateConst_fromInt.as" />
@@ -110,8 +108,8 @@
     <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateConst_fromNewVectorInt.as" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateConst_fromNewVectorInt_short.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateConst_fromNewVectorInt_short.as" />
-    <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateVar_fromUInt.as" />
-    <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateVar_fromNumber.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerate_fromUInt.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerate_fromNumber.as" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateVar_fromNewVectorInt_short.as" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateVar_fromNewVectorInt.as" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateVar_fromNewObject.as" />
