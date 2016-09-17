@@ -91,7 +91,6 @@ namespace PostfixCodeCompletion.Completion
                     Helpers.TemplateUtils.PatternCollection);
 
                 public TestCaseData GetTestCaseFromArrayAccess(string patternPath) => GetTestCaseFromArrayAccess(patternPath, Helpers.TemplateUtils.PatternCollection);
-
                 public TestCaseData GetTestCaseFromArrayAccess(string patternPath, string pccpattern) => new TestCaseData(
                     ReadCode("BeforeGenerate_fromArrayAccess"),
                     new ClassModel {InFile = new FileModel(), Name = "Array", Type = "Array"},
@@ -110,6 +109,20 @@ namespace PostfixCodeCompletion.Completion
                     ReadSnippet(patternPath),
                     Helpers.TemplateUtils.PatternHash);
 
+                public TestCaseData GetTestCaseFromUInt(string patternPath) => GetTestCaseFromUInt(patternPath, Helpers.TemplateUtils.PatternHash);
+                public TestCaseData GetTestCaseFromUInt(string patternPath, string pccpattern) => new TestCaseData(
+                    ReadCode("BeforeGenerate_fromUInt"),
+                    new ClassModel {InFile = new FileModel(), Name = "Number", Type = "Number"},
+                    ReadSnippet(patternPath),
+                    pccpattern);
+
+                public TestCaseData GetTestCaseFromNumber(string patternPath) => GetTestCaseFromNumber(patternPath, Helpers.TemplateUtils.PatternHash);
+                public TestCaseData GetTestCaseFromNumber(string patternPath, string pccpattern) => new TestCaseData(
+                    ReadCode("BeforeGenerate_fromNumber"),
+                    new ClassModel {InFile = new FileModel(), Name = "Number", Type = "Number"},
+                    ReadSnippet(patternPath),
+                    pccpattern);
+
                 public TestCaseData GetTestCaseFromObject(string patternPath) => new TestCaseData(
                     ReadCode("BeforeGenerate_fromObject"),
                     new ClassModel {InFile = new FileModel(), Name = "Object", Type = "Object"},
@@ -117,7 +130,6 @@ namespace PostfixCodeCompletion.Completion
                     Helpers.TemplateUtils.PatternHash);
 
                 public TestCaseData GetTestCaseFromObjectInitializer(string patternPath) => GetTestCaseFromObjectInitializer(patternPath, Helpers.TemplateUtils.PatternHash);
-
                 public TestCaseData GetTestCaseFromObjectInitializer(string patternPath, string pccpattern) => new TestCaseData(
                     ReadCode("BeforeGenerate_fromObjectInitializer"),
                     new ClassModel {InFile = new FileModel(), Name = "Object", Type = "Object"},
@@ -125,7 +137,6 @@ namespace PostfixCodeCompletion.Completion
                     pccpattern);
 
                 public TestCaseData GetTestCaseFromString(string patternPath) => GetTestCaseFromString(patternPath, Helpers.TemplateUtils.PatternString);
-
                 public TestCaseData GetTestCaseFromString(string patternPath, string pccpattern) => new TestCaseData(
                     ReadCode("BeforeGenerate_fromString"),
                     new ClassModel {InFile = new FileModel(), Name = "String", Type = "String"},
@@ -279,19 +290,11 @@ namespace PostfixCodeCompletion.Completion
                                 .Returns(ReadCode("AfterGenerateVar_fromString"))
                                 .SetName("var from \"\".|");
                         yield return
-                            new TestCaseData(
-                                    ReadCode("BeforeGenerateVar_fromUInt"),
-                                    new ClassModel { InFile = new FileModel(), Name = "Number", Type = "Number" },
-                                    ReadSnippet("var"),
-                                    Helpers.TemplateUtils.PatternMember)
+                            GetTestCaseFromUInt("var", Helpers.TemplateUtils.PatternMember)
                                 .Returns(ReadCode("AfterGenerateVar_fromUInt"))
                                 .SetName("var from 1.|");
                         yield return
-                            new TestCaseData(
-                                    ReadCode("BeforeGenerateVar_fromNumber"),
-                                    new ClassModel { InFile = new FileModel(), Name = "Number", Type = "Number" },
-                                    ReadSnippet("var"),
-                                    Helpers.TemplateUtils.PatternMember)
+                            GetTestCaseFromNumber("var", Helpers.TemplateUtils.PatternMember)
                                 .Returns(ReadCode("AfterGenerateVar_fromNumber"))
                                 .SetName("var from 10.0.|");
                         /*yield return
@@ -359,19 +362,11 @@ namespace PostfixCodeCompletion.Completion
                                 .Returns(ReadCode("AfterGenerateConst_fromString"))
                                 .SetName("const from \"\".|");
                         yield return
-                            new TestCaseData(
-                                    ReadCode("BeforeGenerateConst_fromUInt"),
-                                    new ClassModel {InFile = new FileModel(), Name = "Number", Type = "Number"},
-                                    ReadSnippet("const"),
-                                    Helpers.TemplateUtils.PatternMember)
+                            GetTestCaseFromUInt("const", Helpers.TemplateUtils.PatternMember)
                                 .Returns(ReadCode("AfterGenerateConst_fromUInt"))
                                 .SetName("const from 1.|");
                         yield return
-                            new TestCaseData(
-                                    ReadCode("BeforeGenerateConst_fromNumber"),
-                                    new ClassModel {InFile = new FileModel(), Name = "Number", Type = "Number"},
-                                    ReadSnippet("const"),
-                                    Helpers.TemplateUtils.PatternMember)
+                            GetTestCaseFromNumber("const", Helpers.TemplateUtils.PatternMember)
                                 .Returns(ReadCode("AfterGenerateConst_fromNumber"))
                                 .SetName("const from 10.0.|");
                         /*yield return
