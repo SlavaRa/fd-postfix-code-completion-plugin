@@ -158,6 +158,7 @@
     <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateForr_fromArrayAccess.as" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerate_fromType.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateNew_fromType.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateWhile_fromBoolean.as" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
