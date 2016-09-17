@@ -102,9 +102,7 @@
     <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateConst_fromNumber.as" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateConst_fromInt.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateConst_fromInt.as" />
-    <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateConst_fromArray.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateConst_fromArray.as" />
-    <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateConst_fromObject.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateConst_fromObject.as" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateConst_fromNewObject.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateConst_fromNewObject.as" />
@@ -113,13 +111,11 @@
     <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateConst_fromNewVectorInt_short.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateConst_fromNewVectorInt_short.as" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateVar_fromUInt.as" />
-    <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateVar_fromObject.as" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateVar_fromNumber.as" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateVar_fromNewVectorInt_short.as" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateVar_fromNewVectorInt.as" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateVar_fromNewObject.as" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateVar_fromInt.as" />
-    <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateVar_fromArray.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateVar_fromUInt.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateVar_fromString.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateVar_fromObject.as" />
