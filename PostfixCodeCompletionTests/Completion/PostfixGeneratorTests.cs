@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Reflection;
+using System.Windows.Forms;
 using AS3Context;
 using ASCompletion;
 using ASCompletion.Completion;
@@ -9,7 +10,9 @@ using ASCompletion.Settings;
 using NSubstitute;
 using NUnit.Framework;
 using PluginCore.Helpers;
+using PostfixCodeCompletion.Helpers;
 using PostfixCodeCompletion.TestUtils;
+using TemplateUtils = PostfixCodeCompletion.Helpers.TemplateUtils;
 
 namespace PostfixCodeCompletion.Completion
 {
@@ -24,7 +27,7 @@ namespace PostfixCodeCompletion.Completion
             {
                 var pluginMain = Substitute.For<ASCompletion.PluginMain>();
                 var pluginUI = new PluginUI(pluginMain);
-                pluginMain.MenuItems.Returns(new List<System.Windows.Forms.ToolStripItem>());
+                pluginMain.MenuItems.Returns(new List<ToolStripItem>());
                 pluginMain.Settings.Returns(new GeneralSettings());
                 pluginMain.Panel.Returns(pluginUI);
                 #region ASContext.GlobalInit(pluginMain);
@@ -33,7 +36,7 @@ namespace PostfixCodeCompletion.Completion
                 #endregion
                 ASContext.Context = Substitute.For<IASContext>();
                 CurrentDocument.SciControl.Returns(Sci);
-                Helpers.TemplateUtils.Settings = new Settings();
+                TemplateUtils.Settings = new Settings();
             }
 
             static string ConvertWinNewlineToUnix(string s) => s.Replace("\r\n", "\n");
@@ -45,7 +48,7 @@ namespace PostfixCodeCompletion.Completion
             {
                 Sci.Text = sourceText;
                 SnippetHelper.PostProcessSnippets(Sci, 0);
-                var context = new AS3Context.Context(new AS3Settings());
+                var context = new Context(new AS3Settings());
                 ASContext.Context.Features.Returns(context.Features);
                 ASContext.Context.IsFileValid.Returns(true);
                 var currentModel = new FileModel {Context = ASContext.Context};
@@ -68,12 +71,12 @@ namespace PostfixCodeCompletion.Completion
                         var result = x.ArgAt<ASResult>(1);
                         result.Type = type;
                     });
-                var expr = Helpers.CompleteHelper.GetCurrentExpressionType();
-                var tmp = Helpers.TemplateUtils.GetTemplate(template, new[] {type.Type, pccpattern});
+                var expr = CompleteHelper.GetCurrentExpressionType();
+                var tmp = TemplateUtils.GetTemplate(template, new[] {type.Type, pccpattern});
                 if (!string.IsNullOrEmpty(tmp)) template = tmp;
                 template = template.Replace("$(ItmUniqueVar)", ASComplete.FindFreeIterator(ASContext.Context, ASContext.Context.CurrentClass, new ASResult().Context));
-                template = Helpers.TemplateUtils.ProcessTemplate(pccpattern, template, expr);
-                Helpers.TemplateUtils.InsertSnippetText(expr, template, pccpattern);
+                template = TemplateUtils.ProcessTemplate(pccpattern, template, expr);
+                TemplateUtils.InsertSnippetText(expr, template, pccpattern);
                 return ConvertWinNewlineToUnix(Sci.Text);
             }
 
@@ -87,19 +90,32 @@ namespace PostfixCodeCompletion.Completion
                     ReadCode("BeforeGenerate_fromArray"),
                     new ClassModel {InFile = new FileModel(), Name = "Array", Type = "Array"},
                     ReadSnippet(patternPath),
-                    Helpers.TemplateUtils.PatternCollection);
+                    TemplateUtils.PatternCollection);
 
-                public TestCaseData GetTestCasefromArrayInitializer(string patternPath) => GetTestCasefromArrayInitializer(patternPath, Helpers.TemplateUtils.PatternCollection);
-                public TestCaseData GetTestCasefromArrayInitializer(string patternPath, string pccpattern) => new TestCaseData(
+                public TestCaseData GetTestCaseFromArrayInitializer(string patternPath) => GetTestCaseFromArrayInitializer(patternPath, TemplateUtils.PatternCollection);
+                public TestCaseData GetTestCaseFromArrayInitializer(string patternPath, string pccpattern) => new TestCaseData(
                     ReadCode("BeforeGenerate_fromArrayInitializer"),
                     new ClassModel {InFile = new FileModel(), Name = "Array", Type = "Array"},
                     ReadSnippet(patternPath),
                     pccpattern);
 
-                public TestCaseData GetTestCasefromMultilineArrayInitializer(string patternPath) => GetTestCasefromMultilineArrayInitializer(patternPath, Helpers.TemplateUtils.PatternCollection);
-                public TestCaseData GetTestCasefromMultilineArrayInitializer(string patternPath, string pccpattern) => new TestCaseData(
+                public TestCaseData GetTestCaseFromMultilineArrayInitializer(string patternPath) => GetTestCaseFromMultilineArrayInitializer(patternPath, TemplateUtils.PatternCollection);
+                public TestCaseData GetTestCaseFromMultilineArrayInitializer(string patternPath, string pccpattern) => new TestCaseData(
                     ReadCode("BeforeGenerate_fromMultilineArrayInitializer"),
                     new ClassModel {InFile = new FileModel(), Name = "Array", Type = "Array"},
+                    ReadSnippet(patternPath),
+                    pccpattern);
+
+                public TestCaseData GetTestCaseFromVector(string patternPath) => new TestCaseData(
+                    ReadCode("BeforeGenerate_fromVector"),
+                    new ClassModel {InFile = new FileModel(), Name = "Vector.<Object>", Type = "Vector.<Object>"},
+                    ReadSnippet(patternPath),
+                    TemplateUtils.PatternCollection);
+
+                public TestCaseData GetTestCaseFromVectorInitializer(string patternPath) => GetTestCaseFromVectorInitializer(patternPath, TemplateUtils.PatternCollection);
+                public TestCaseData GetTestCaseFromVectorInitializer(string patternPath, string pccpattern) => new TestCaseData(
+                    ReadCode("BeforeGenerate_fromVectorInitializer"),
+                    new ClassModel {InFile = new FileModel(), Name = "Vector.<Object>", Type = "Vector.<Object>"},
                     ReadSnippet(patternPath),
                     pccpattern);
 
@@ -107,22 +123,22 @@ namespace PostfixCodeCompletion.Completion
                     ReadCode("BeforeGenerate_fromBoolean"),
                     new ClassModel {InFile = new FileModel(), Name = "Boolean", Type = "Boolean"},
                     ReadSnippet(patternPath),
-                    Helpers.TemplateUtils.PatternBool);
+                    TemplateUtils.PatternBool);
 
                 public TestCaseData GetTestCaseFromDictionary(string patternPath) => new TestCaseData(
                     ReadCode("BeforeGenerate_fromDictionary"),
                     new ClassModel {InFile = new FileModel(), Name = "Dictionary", Type = "flash.utils.Dictionary"},
                     ReadSnippet(patternPath),
-                    Helpers.TemplateUtils.PatternHash);
+                    TemplateUtils.PatternHash);
 
-                public TestCaseData GetTestCaseFromUInt(string patternPath) => GetTestCaseFromUInt(patternPath, Helpers.TemplateUtils.PatternHash);
+                public TestCaseData GetTestCaseFromUInt(string patternPath) => GetTestCaseFromUInt(patternPath, TemplateUtils.PatternHash);
                 public TestCaseData GetTestCaseFromUInt(string patternPath, string pccpattern) => new TestCaseData(
                     ReadCode("BeforeGenerate_fromUInt"),
                     new ClassModel {InFile = new FileModel(), Name = "Number", Type = "Number"},
                     ReadSnippet(patternPath),
                     pccpattern);
 
-                public TestCaseData GetTestCaseFromNumber(string patternPath) => GetTestCaseFromNumber(patternPath, Helpers.TemplateUtils.PatternHash);
+                public TestCaseData GetTestCaseFromNumber(string patternPath) => GetTestCaseFromNumber(patternPath, TemplateUtils.PatternHash);
                 public TestCaseData GetTestCaseFromNumber(string patternPath, string pccpattern) => new TestCaseData(
                     ReadCode("BeforeGenerate_fromNumber"),
                     new ClassModel {InFile = new FileModel(), Name = "Number", Type = "Number"},
@@ -133,16 +149,16 @@ namespace PostfixCodeCompletion.Completion
                     ReadCode("BeforeGenerate_fromObject"),
                     new ClassModel {InFile = new FileModel(), Name = "Object", Type = "Object"},
                     ReadSnippet(patternPath),
-                    Helpers.TemplateUtils.PatternHash);
+                    TemplateUtils.PatternHash);
 
-                public TestCaseData GetTestCaseFromObjectInitializer(string patternPath) => GetTestCaseFromObjectInitializer(patternPath, Helpers.TemplateUtils.PatternHash);
+                public TestCaseData GetTestCaseFromObjectInitializer(string patternPath) => GetTestCaseFromObjectInitializer(patternPath, TemplateUtils.PatternHash);
                 public TestCaseData GetTestCaseFromObjectInitializer(string patternPath, string pccpattern) => new TestCaseData(
                     ReadCode("BeforeGenerate_fromObjectInitializer"),
                     new ClassModel {InFile = new FileModel(), Name = "Object", Type = "Object"},
                     ReadSnippet(patternPath),
                     pccpattern);
 
-                public TestCaseData GetTestCaseFromString(string patternPath) => GetTestCaseFromString(patternPath, Helpers.TemplateUtils.PatternString);
+                public TestCaseData GetTestCaseFromString(string patternPath) => GetTestCaseFromString(patternPath, TemplateUtils.PatternString);
                 public TestCaseData GetTestCaseFromString(string patternPath, string pccpattern) => new TestCaseData(
                     ReadCode("BeforeGenerate_fromString"),
                     new ClassModel {InFile = new FileModel(), Name = "String", Type = "String"},
@@ -154,7 +170,7 @@ namespace PostfixCodeCompletion.Completion
                     get
                     {
                         yield return
-                            GetTestCaseFromString("constructor", Helpers.TemplateUtils.PatternMember)
+                            GetTestCaseFromString("constructor", TemplateUtils.PatternMember)
                                 .Returns(ReadCode("AfterGenerateConstructor_fromString"))
                                 .SetName("constructor from \"\".|");
                     }
@@ -187,7 +203,7 @@ namespace PostfixCodeCompletion.Completion
                     get
                     {
                         yield return
-                            GetTestCaseFromString("null", Helpers.TemplateUtils.PatternNullable)
+                            GetTestCaseFromString("null", TemplateUtils.PatternNullable)
                                 .Returns(ReadCode("AfterGenerateNull_fromString"))
                                 .SetName("null from \"\".|");
                     }
@@ -198,7 +214,7 @@ namespace PostfixCodeCompletion.Completion
                     get
                     {
                         yield return
-                            GetTestCaseFromString("notnull", Helpers.TemplateUtils.PatternNullable)
+                            GetTestCaseFromString("notnull", TemplateUtils.PatternNullable)
                                 .Returns(ReadCode("AfterGenerateNotNull_fromString"))
                                 .SetName("notnull from \"\".|");
                     }
@@ -224,7 +240,7 @@ namespace PostfixCodeCompletion.Completion
                                 .Returns(ReadCode("AfterGenerateForeach_fromArray"))
                                 .SetName("foreach from array.|");
                         yield return
-                            GetTestCasefromArrayInitializer("foreach")
+                            GetTestCaseFromArrayInitializer("foreach")
                                 .Returns(ReadCode("AfterGenerateForeach_fromArrayInitializer"))
                                 .SetName("foreach from [].|");
                         yield return
@@ -239,6 +255,10 @@ namespace PostfixCodeCompletion.Completion
                             GetTestCaseFromDictionary("foreach")
                                 .Returns(ReadCode("AfterGenerateForeach_fromDictionary"))
                                 .SetName("foreach from dictionary.|");
+                        yield return
+                            GetTestCaseFromVector("foreach")
+                                .Returns(ReadCode("AfterGenerateForeach_fromVector"))
+                                .SetName("foreach from vector.|");
                     }
                 }
 
@@ -270,11 +290,19 @@ namespace PostfixCodeCompletion.Completion
                                 .Returns(ReadCode("AfterGenerateFor_fromArray"))
                                 .SetName("for from array.|");
                         yield return
-                            GetTestCasefromArrayInitializer("for")
+                            GetTestCaseFromArrayInitializer("for")
                                 .Returns(ReadCode("AfterGenerateFor_fromArrayInitializer"))
                                 .SetName("for from [].|");
                         yield return
-                            GetTestCaseFromNumber("for", Helpers.TemplateUtils.PatternNumber)
+                            GetTestCaseFromVector("for")
+                                .Returns(ReadCode("AfterGenerateFor_fromVector"))
+                                .SetName("for from vector.|");
+                        yield return
+                            GetTestCaseFromVectorInitializer("for")
+                                .Returns(ReadCode("AfterGenerateFor_fromVectorInitializer"))
+                                .SetName("for from new <Object>[].|");
+                        yield return
+                            GetTestCaseFromNumber("for", TemplateUtils.PatternNumber)
                                 .Returns(ReadCode("AfterGenerateFor_fromNumber"))
                                 .SetName("for from 10.0.|");
                     }
@@ -289,11 +317,11 @@ namespace PostfixCodeCompletion.Completion
                                 .Returns(ReadCode("AfterGenerateForr_fromArray"))
                                 .SetName("forr from array.|");
                         yield return
-                            GetTestCasefromArrayInitializer("forr")
+                            GetTestCaseFromArrayInitializer("forr")
                                 .Returns(ReadCode("AfterGenerateForr_fromArrayInitializer"))
                                 .SetName("forr from [].|");
                         yield return
-                            GetTestCaseFromNumber("forr", Helpers.TemplateUtils.PatternNumber)
+                            GetTestCaseFromNumber("forr", TemplateUtils.PatternNumber)
                                 .Returns(ReadCode("AfterGenerateForr_fromNumber"))
                                 .SetName("forr from 10.0.|");
                     }
@@ -304,15 +332,15 @@ namespace PostfixCodeCompletion.Completion
                     get
                     {
                         yield return
-                            GetTestCaseFromString("var", Helpers.TemplateUtils.PatternMember)
+                            GetTestCaseFromString("var", TemplateUtils.PatternMember)
                                 .Returns(ReadCode("AfterGenerateVar_fromString"))
                                 .SetName("var from \"\".|");
                         yield return
-                            GetTestCaseFromUInt("var", Helpers.TemplateUtils.PatternMember)
+                            GetTestCaseFromUInt("var", TemplateUtils.PatternMember)
                                 .Returns(ReadCode("AfterGenerateVar_fromUInt"))
                                 .SetName("var from 1.|");
                         yield return
-                            GetTestCaseFromNumber("var", Helpers.TemplateUtils.PatternMember)
+                            GetTestCaseFromNumber("var", TemplateUtils.PatternMember)
                                 .Returns(ReadCode("AfterGenerateVar_fromNumber"))
                                 .SetName("var from 10.0.|");
                         /*yield return
@@ -327,11 +355,11 @@ namespace PostfixCodeCompletion.Completion
                                 .SetName("var from -1.|")
                                 .Ignore();*/
                         yield return
-                            GetTestCasefromArrayInitializer("var", Helpers.TemplateUtils.PatternMember)
+                            GetTestCaseFromArrayInitializer("var", TemplateUtils.PatternMember)
                                 .Returns(ReadCode("AfterGenerateVar_fromArray"))
                                 .SetName("var from [].|");
                         yield return
-                            GetTestCaseFromObjectInitializer("var", Helpers.TemplateUtils.PatternMember)
+                            GetTestCaseFromObjectInitializer("var", TemplateUtils.PatternMember)
                                 .Returns(ReadCode("AfterGenerateVar_fromObject"))
                                 .SetName("var from {}.|");
                         yield return
@@ -339,7 +367,7 @@ namespace PostfixCodeCompletion.Completion
                                     ReadCode("BeforeGenerateVar_fromNewObject"),
                                     new ClassModel { InFile = new FileModel(), Name = "Object", Type = "Object" },
                                     ReadSnippet("var"),
-                                    Helpers.TemplateUtils.PatternMember)
+                                    TemplateUtils.PatternMember)
                                 .Returns(ReadCode("AfterGenerateVar_fromNewObject"))
                                 .SetName("var from new Object().|");
                         yield return
@@ -352,22 +380,13 @@ namespace PostfixCodeCompletion.Completion
                                         Type = "Vector.<int>"
                                     },
                                     ReadSnippet("var"),
-                                    Helpers.TemplateUtils.PatternMember)
+                                    TemplateUtils.PatternMember)
                                 .Returns(ReadCode("AfterGenerateVar_fromNewVectorInt"))
                                 .SetName("var from new Vector.<int>().|");
                         yield return
-                            new TestCaseData(
-                                    ReadCode("BeforeGenerateVar_fromNewVectorInt_short"),
-                                    new ClassModel
-                                    {
-                                        InFile = new FileModel(),
-                                        Name = "Vector.<int>",
-                                        Type = "Vector.<int>"
-                                    },
-                                    ReadSnippet("var"),
-                                    Helpers.TemplateUtils.PatternMember)
-                                .Returns(ReadCode("AfterGenerateVar_fromNewVectorInt_short"))
-                                .SetName("var from new <int>[].|");
+                            GetTestCaseFromVectorInitializer("var", TemplateUtils.PatternMember)
+                                .Returns(ReadCode("AfterGenerateVar_fromVectorInitializer"))
+                                .SetName("var from new <Object>[].|");
                     }
                 }
 
@@ -376,15 +395,15 @@ namespace PostfixCodeCompletion.Completion
                     get
                     {
                         yield return
-                            GetTestCaseFromString("const", Helpers.TemplateUtils.PatternMember)
+                            GetTestCaseFromString("const", TemplateUtils.PatternMember)
                                 .Returns(ReadCode("AfterGenerateConst_fromString"))
                                 .SetName("const from \"\".|");
                         yield return
-                            GetTestCaseFromUInt("const", Helpers.TemplateUtils.PatternMember)
+                            GetTestCaseFromUInt("const", TemplateUtils.PatternMember)
                                 .Returns(ReadCode("AfterGenerateConst_fromUInt"))
                                 .SetName("const from 1.|");
                         yield return
-                            GetTestCaseFromNumber("const", Helpers.TemplateUtils.PatternMember)
+                            GetTestCaseFromNumber("const", TemplateUtils.PatternMember)
                                 .Returns(ReadCode("AfterGenerateConst_fromNumber"))
                                 .SetName("const from 10.0.|");
                         /*yield return
@@ -400,11 +419,11 @@ namespace PostfixCodeCompletion.Completion
                                 .SetName("const from -1.|")
                                 .Ignore();*/
                         yield return
-                            GetTestCasefromArrayInitializer("const", Helpers.TemplateUtils.PatternMember)
+                            GetTestCaseFromArrayInitializer("const", TemplateUtils.PatternMember)
                                 .Returns(ReadCode("AfterGenerateConst_fromArray"))
                                 .SetName("const from [].|");
                         yield return
-                            GetTestCaseFromObjectInitializer("const", Helpers.TemplateUtils.PatternMember)
+                            GetTestCaseFromObjectInitializer("const", TemplateUtils.PatternMember)
                                 .Returns(ReadCode("AfterGenerateConst_fromObject"))
                                 .SetName("const from {}.|");
                         yield return
@@ -412,7 +431,7 @@ namespace PostfixCodeCompletion.Completion
                                     ReadCode("BeforeGenerateConst_fromNewObject"),
                                     new ClassModel {InFile = new FileModel(), Name = "Object", Type = "Object"},
                                     ReadSnippet("const"),
-                                    Helpers.TemplateUtils.PatternMember)
+                                    TemplateUtils.PatternMember)
                                 .Returns(ReadCode("AfterGenerateConst_fromNewObject"))
                                 .SetName("const from new Object().|");
                         yield return
@@ -425,22 +444,13 @@ namespace PostfixCodeCompletion.Completion
                                         Type = "Vector.<int>"
                                     },
                                     ReadSnippet("const"),
-                                    Helpers.TemplateUtils.PatternMember)
+                                    TemplateUtils.PatternMember)
                                 .Returns(ReadCode("AfterGenerateConst_fromNewVectorInt"))
                                 .SetName("const from new Vector.<int>().|");
                         yield return
-                            new TestCaseData(
-                                    ReadCode("BeforeGenerateConst_fromNewVectorInt_short"),
-                                    new ClassModel
-                                    {
-                                        InFile = new FileModel(),
-                                        Name = "Vector.<int>",
-                                        Type = "Vector.<int>"
-                                    },
-                                    ReadSnippet("const"),
-                                    Helpers.TemplateUtils.PatternMember)
-                                .Returns(ReadCode("AfterGenerateConst_fromNewVectorInt_short"))
-                                .SetName("const from new <int>[].|");
+                            GetTestCaseFromVectorInitializer("const", TemplateUtils.PatternMember)
+                                .Returns(ReadCode("AfterGenerateConst_fromVectorInitializer"))
+                                .SetName("const from new <Object>[].|");
                     }
                 }
 
@@ -453,7 +463,7 @@ namespace PostfixCodeCompletion.Completion
                                     ReadCode("BeforeGenerate_fromType"),
                                     new ClassModel { InFile = new FileModel(), Name = "Type", Type = "Type" },
                                     ReadSnippet("new"),
-                                    Helpers.TemplateUtils.PatternType)
+                                    TemplateUtils.PatternType)
                                 .Returns(ReadCode("AfterGenerateNew_fromType"))
                                 .SetName("new from Type.|");
                     }
@@ -464,7 +474,7 @@ namespace PostfixCodeCompletion.Completion
                     get
                     {
                         yield return
-                            GetTestCaseFromString("par", Helpers.TemplateUtils.PatternMember)
+                            GetTestCaseFromString("par", TemplateUtils.PatternMember)
                                 .Returns(ReadCode("AfterGeneratePar_fromString"))
                                 .SetName("par from \"\".|");
                     }
@@ -475,11 +485,11 @@ namespace PostfixCodeCompletion.Completion
                     get
                     {
                         yield return
-                            GetTestCaseFromString("return", Helpers.TemplateUtils.PatternMember)
+                            GetTestCaseFromString("return", TemplateUtils.PatternMember)
                                 .Returns(ReadCode("AfterGenerateReturn_fromString"))
                                 .SetName("return from \"\".|");
                         yield return
-                            GetTestCasefromMultilineArrayInitializer("return", Helpers.TemplateUtils.PatternMember)
+                            GetTestCaseFromMultilineArrayInitializer("return", TemplateUtils.PatternMember)
                                 .Returns(ReadCode("AfterGenerateReturn_fromMultilineArrayInitializer"))
                                 .SetName("return from [].|");
                     }
@@ -512,7 +522,7 @@ namespace PostfixCodeCompletion.Completion
                     get
                     {
                         yield return
-                            GetTestCaseFromString("sel", Helpers.TemplateUtils.PatternMember)
+                            GetTestCaseFromString("sel", TemplateUtils.PatternMember)
                                 .Returns(ReadCode("AfterGenerateSel_fromString"))
                                 .SetName("sel from \"\".|");
                     }
@@ -523,7 +533,7 @@ namespace PostfixCodeCompletion.Completion
                     get
                     {
                         yield return
-                            GetTestCaseFromString("trace", Helpers.TemplateUtils.PatternMember)
+                            GetTestCaseFromString("trace", TemplateUtils.PatternMember)
                                 .Returns(ReadCode("AfterGenerateTrace_fromString"))
                                 .SetName("trace from \"\".|");
                     }

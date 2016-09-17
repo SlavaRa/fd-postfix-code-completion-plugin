@@ -106,11 +106,9 @@
     <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateConst_fromNewObject.as" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateConst_fromNewVectorInt.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateConst_fromNewVectorInt.as" />
-    <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateConst_fromNewVectorInt_short.as" />
-    <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateConst_fromNewVectorInt_short.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateConst_fromVectorInitializer.as" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerate_fromUInt.as" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerate_fromNumber.as" />
-    <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateVar_fromNewVectorInt_short.as" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateVar_fromNewVectorInt.as" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateVar_fromNewObject.as" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateVar_fromInt.as" />
@@ -118,7 +116,7 @@
     <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateVar_fromString.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateVar_fromObject.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateVar_fromNumber.as" />
-    <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateVar_fromNewVectorInt_short.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateVar_fromVectorInitializer.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateVar_fromNewVectorInt.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateVar_fromNewObject.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateVar_fromInt.as" />
@@ -161,6 +159,12 @@
     <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateForr_fromNumber.as" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerate_fromMultilineArrayInitializer.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateReturn_fromMultilineArrayInitializer.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerate_fromVectorInitializer.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerate_fromVector.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateForeach_fromVector.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateFor_fromVector.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateForeach_fromVectorInitializer.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateFor_fromVectorInitializer.as" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

@@ -1,7 +1,9 @@
 ﻿package {
 	public class Main {
 		public function Main() {
-			const vector:Vector.<int> = new <int>[0];
+			for (var i:int = 0; i < new <Object>[{}].length; i++) {
+				
+			}
 		}
 	}
 }

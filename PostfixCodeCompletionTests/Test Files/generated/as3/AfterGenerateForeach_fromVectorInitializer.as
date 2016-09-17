@@ -1,7 +1,9 @@
 ﻿package {
 	public class Main {
 		public function Main() {
-			new <int>[0].$(EntryPoint)
+			for each (var item:Object in new <Object>[{}]) {
+				
+			}
 		}
 	}
 }
