@@ -1,3 +1,4 @@
+#pcc:PCCCollection
 for (var $(ItmUniqueVar):int = $(PCCCollection).length - 1; $(ItmUniqueVar) >= 0; $(ItmUniqueVar)--) $(CSLB){
 	$(EntryPoint)
 }

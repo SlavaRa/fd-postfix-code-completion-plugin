@@ -141,21 +141,24 @@
     <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerate_fromObject.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateForeach_fromDictionary.as" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerate_fromDictionary.as" />
-    <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerate_fromArrayAccess.as" />
-    <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateForeach_fromArrayAccess.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerate_fromArrayInitializer.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateForeach_fromArrayInitializer.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateForeach_fromObjectInitializer.as" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerate_fromObjectInitializer.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateForin_fromObjectInitializer.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateForin_fromObject.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateForin_fromDictionary.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateForr_fromArray.as" />
-    <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateForr_fromArrayAccess.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateForr_fromArrayInitializer.as" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerate_fromType.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateNew_fromType.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateWhile_fromBoolean.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateDowhile_fromBoolean.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateTrace_fromString.as" />
     <EmbeddedResource Include="Test Snippets\as3\postfixgenerator\trace.fds" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateFor_fromArrayInitializer.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateFor_fromNumber.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateForr_fromNumber.as" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

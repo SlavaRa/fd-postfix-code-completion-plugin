@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Reflection;
 using AS3Context;
 using ASCompletion;
@@ -90,9 +89,9 @@ namespace PostfixCodeCompletion.Completion
                     ReadSnippet(patternPath),
                     Helpers.TemplateUtils.PatternCollection);
 
-                public TestCaseData GetTestCaseFromArrayAccess(string patternPath) => GetTestCaseFromArrayAccess(patternPath, Helpers.TemplateUtils.PatternCollection);
-                public TestCaseData GetTestCaseFromArrayAccess(string patternPath, string pccpattern) => new TestCaseData(
-                    ReadCode("BeforeGenerate_fromArrayAccess"),
+                public TestCaseData GetTestCasefromArrayInitializer(string patternPath) => GetTestCasefromArrayInitializer(patternPath, Helpers.TemplateUtils.PatternCollection);
+                public TestCaseData GetTestCasefromArrayInitializer(string patternPath, string pccpattern) => new TestCaseData(
+                    ReadCode("BeforeGenerate_fromArrayInitializer"),
                     new ClassModel {InFile = new FileModel(), Name = "Array", Type = "Array"},
                     ReadSnippet(patternPath),
                     pccpattern);
@@ -218,8 +217,8 @@ namespace PostfixCodeCompletion.Completion
                                 .Returns(ReadCode("AfterGenerateForeach_fromArray"))
                                 .SetName("foreach from array.|");
                         yield return
-                            GetTestCaseFromArrayAccess("foreach")
-                                .Returns(ReadCode("AfterGenerateForeach_fromArrayAccess"))
+                            GetTestCasefromArrayInitializer("foreach")
+                                .Returns(ReadCode("AfterGenerateForeach_fromArrayInitializer"))
                                 .SetName("foreach from [].|");
                         yield return
                             GetTestCaseFromObject("foreach")
@@ -263,6 +262,14 @@ namespace PostfixCodeCompletion.Completion
                             GetTestCaseFromArray("for")
                                 .Returns(ReadCode("AfterGenerateFor_fromArray"))
                                 .SetName("for from array.|");
+                        yield return
+                            GetTestCasefromArrayInitializer("for")
+                                .Returns(ReadCode("AfterGenerateFor_fromArrayInitializer"))
+                                .SetName("for from [].|");
+                        yield return
+                            GetTestCaseFromNumber("for", Helpers.TemplateUtils.PatternNumber)
+                                .Returns(ReadCode("AfterGenerateFor_fromNumber"))
+                                .SetName("for from 10.0.|");
                     }
                 }
 
@@ -275,9 +282,13 @@ namespace PostfixCodeCompletion.Completion
                                 .Returns(ReadCode("AfterGenerateForr_fromArray"))
                                 .SetName("forr from array.|");
                         yield return
-                            GetTestCaseFromArrayAccess("forr")
-                                .Returns(ReadCode("AfterGenerateForr_fromArrayAccess"))
+                            GetTestCasefromArrayInitializer("forr")
+                                .Returns(ReadCode("AfterGenerateForr_fromArrayInitializer"))
                                 .SetName("forr from [].|");
+                        yield return
+                            GetTestCaseFromNumber("forr", Helpers.TemplateUtils.PatternNumber)
+                                .Returns(ReadCode("AfterGenerateForr_fromNumber"))
+                                .SetName("forr from 10.0.|");
                     }
                 }
 
@@ -309,7 +320,7 @@ namespace PostfixCodeCompletion.Completion
                                 .SetName("var from -1.|")
                                 .Ignore();*/
                         yield return
-                            GetTestCaseFromArrayAccess("var", Helpers.TemplateUtils.PatternMember)
+                            GetTestCasefromArrayInitializer("var", Helpers.TemplateUtils.PatternMember)
                                 .Returns(ReadCode("AfterGenerateVar_fromArray"))
                                 .SetName("var from [].|");
                         yield return
@@ -382,7 +393,7 @@ namespace PostfixCodeCompletion.Completion
                                 .SetName("const from -1.|")
                                 .Ignore();*/
                         yield return
-                            GetTestCaseFromArrayAccess("const", Helpers.TemplateUtils.PatternMember)
+                            GetTestCasefromArrayInitializer("const", Helpers.TemplateUtils.PatternMember)
                                 .Returns(ReadCode("AfterGenerateConst_fromArray"))
                                 .SetName("const from [].|");
                         yield return
