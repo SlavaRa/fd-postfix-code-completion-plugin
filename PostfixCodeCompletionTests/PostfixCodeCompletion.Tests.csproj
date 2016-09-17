@@ -156,6 +156,7 @@
     <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateNew_fromType.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateWhile_fromBoolean.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateDowhile_fromBoolean.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateTrace_fromString.as" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

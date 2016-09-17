@@ -501,11 +501,23 @@ namespace PostfixCodeCompletion.Completion
                     }
                 }
 
+                public IEnumerable<TestCaseData> Trace
+                {
+                    get
+                    {
+                        yield return
+                            GetTestCaseFromString("trace", Helpers.TemplateUtils.PatternMember)
+                                .Returns(ReadCode("AfterGenerateTrace_fromString"))
+                                .SetName("trace from \"\".|");
+                    }
+                }
+
                 [Test, TestCaseSource("Const"), TestCaseSource("Var"), TestCaseSource("Constructor"), TestCaseSource("Par"), TestCaseSource("Return"),
                        TestCaseSource("If"), TestCaseSource("Else"), TestCaseSource("Not"), TestCaseSource("Notnull"), TestCaseSource("Null"),
                        TestCaseSource("Foreach"), TestCaseSource("Forin"), TestCaseSource("For"), TestCaseSource("Forr"),
                        TestCaseSource("New"),
-                       TestCaseSource("While"), TestCaseSource("Dowhile")]
+                       TestCaseSource("While"), TestCaseSource("Dowhile"),
+                       TestCaseSource("Trace")]
                 public string AS3(string sourceText, ClassModel type, string template, string pccpattern) => Generate(sourceText, type, template, pccpattern);
             }
         }
