@@ -26,10 +26,10 @@ Available templates for **AS3**:
 * `.foreach` – iterates over collection `foreach (var x in expr)`
 * `.forin` - for Object surrounds with loop `for (var key:String in expr)`
 * `.forin` - for Dictionary surrounds with loop `for (var key:Object in expr)`
-* `.for` – for Array|Vector surrounds with loop `for (var i = 0; i < expr.length; i++)`
-* `.for` – for Numeric surrounds with loop `for (var i = 0; i < expr; i++)`
-* `.forr` – for Array|Vector reverse loop `for (var i = expr.length - 1; i >= 0; i--)`
-* `.forr` – for Numeric reverse loop `for (var i = expr; i >= 0; i--)`
+* `.for` – for Array|Vector surrounds with loop `for (var i:int = 0; i < expr.length; i++)`
+* `.for` – for Numeric surrounds with loop `for (var i:int = 0; i < expr; i++)`
+* `.forr` – for Array|Vector reverse loop `for (var i:int = expr.length - 1; i >= 0; i--)`
+* `.forr` – for Numeric reverse loop `for (var i:int = expr; i >= 0; i--)`
 * `.var` – initialize new variable with expression `var x = expr;`
 * `.const` – initialize new variable with expression `const x = expr;`
 * `.new` – produces instantiation expression for type `new T()`
