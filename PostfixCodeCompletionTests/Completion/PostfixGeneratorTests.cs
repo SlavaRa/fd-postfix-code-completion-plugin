@@ -104,6 +104,12 @@ namespace PostfixCodeCompletion.Completion
                     ReadSnippet(patternPath),
                     Helpers.TemplateUtils.PatternBool);
 
+                public TestCaseData GetTestCaseFromDictionary(string patternPath) => new TestCaseData(
+                    ReadCode("BeforeGenerate_fromDictionary"),
+                    new ClassModel {InFile = new FileModel(), Name = "Dictionary", Type = "flash.utils.Dictionary"},
+                    ReadSnippet(patternPath),
+                    Helpers.TemplateUtils.PatternHash);
+
                 public TestCaseData GetTestCaseFromObject(string patternPath) => new TestCaseData(
                     ReadCode("BeforeGenerate_fromObject"),
                     new ClassModel {InFile = new FileModel(), Name = "Object", Type = "Object"},
@@ -213,11 +219,7 @@ namespace PostfixCodeCompletion.Completion
                                 .Returns(ReadCode("AfterGenerateForeach_fromObjectInitializer"))
                                 .SetName("foreach from {}.|");
                         yield return
-                            new TestCaseData(
-                                    ReadCode("BeforeGenerate_fromDictionary"),
-                                    new ClassModel { InFile = new FileModel(), Name = "Dictionary", Type = "flash.utils.Dictionary" },
-                                    ReadSnippet("foreach"),
-                                    Helpers.TemplateUtils.PatternHash)
+                            GetTestCaseFromDictionary("foreach")
                                 .Returns(ReadCode("AfterGenerateForeach_fromDictionary"))
                                 .SetName("foreach from dictionary.|");
                     }
@@ -236,11 +238,7 @@ namespace PostfixCodeCompletion.Completion
                                 .Returns(ReadCode("AfterGenerateForin_fromObjectInitializer"))
                                 .SetName("forin from {}.|");
                         yield return
-                            new TestCaseData(
-                                    ReadCode("BeforeGenerate_fromDictionary"),
-                                    new ClassModel { InFile = new FileModel(), Name = "Dictionary", Type = "flash.utils.Dictionary" },
-                                    ReadSnippet("forin"),
-                                    Helpers.TemplateUtils.PatternHash)
+                            GetTestCaseFromDictionary("forin")
                                 .Returns(ReadCode("AfterGenerateForin_fromDictionary"))
                                 .SetName("forin from dictionary.|");
                     }
