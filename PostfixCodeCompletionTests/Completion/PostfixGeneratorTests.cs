@@ -96,6 +96,13 @@ namespace PostfixCodeCompletion.Completion
                     ReadSnippet(patternPath),
                     pccpattern);
 
+                public TestCaseData GetTestCasefromMultilineArrayInitializer(string patternPath) => GetTestCasefromMultilineArrayInitializer(patternPath, Helpers.TemplateUtils.PatternCollection);
+                public TestCaseData GetTestCasefromMultilineArrayInitializer(string patternPath, string pccpattern) => new TestCaseData(
+                    ReadCode("BeforeGenerate_fromMultilineArrayInitializer"),
+                    new ClassModel {InFile = new FileModel(), Name = "Array", Type = "Array"},
+                    ReadSnippet(patternPath),
+                    pccpattern);
+
                 public TestCaseData GetTestCaseFromBoolean(string patternPath) => new TestCaseData(
                     ReadCode("BeforeGenerate_fromBoolean"),
                     new ClassModel {InFile = new FileModel(), Name = "Boolean", Type = "Boolean"},
@@ -471,6 +478,10 @@ namespace PostfixCodeCompletion.Completion
                             GetTestCaseFromString("return", Helpers.TemplateUtils.PatternMember)
                                 .Returns(ReadCode("AfterGenerateReturn_fromString"))
                                 .SetName("return from \"\".|");
+                        yield return
+                            GetTestCasefromMultilineArrayInitializer("return", Helpers.TemplateUtils.PatternMember)
+                                .Returns(ReadCode("AfterGenerateReturn_fromMultilineArrayInitializer"))
+                                .SetName("return from [].|");
                     }
                 }
 

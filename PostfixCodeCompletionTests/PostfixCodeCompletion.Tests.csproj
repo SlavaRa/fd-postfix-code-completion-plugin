@@ -159,6 +159,8 @@
     <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateFor_fromArrayInitializer.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateFor_fromNumber.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateForr_fromNumber.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerate_fromMultilineArrayInitializer.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateReturn_fromMultilineArrayInitializer.as" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
