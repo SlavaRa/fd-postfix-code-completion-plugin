@@ -627,6 +627,25 @@ namespace PostfixCodeCompletion.Completion
                     }
                 }
 
+                public IEnumerable<TestCaseData> While
+                {
+                    get
+                    {
+                        yield return
+                            new TestCaseData(
+                                    ReadAllText(
+                                        "PostfixCodeCompletion.Test_Files.generated.as3.BeforeGenerate_fromBoolean.as"),
+                                    new ClassModel {InFile = new FileModel(), Name = "Boolean", Type = "Boolean"},
+                                    ReadAllText(
+                                        "PostfixCodeCompletion.Test_Snippets.as3.postfixgenerator.while.fds"),
+                                    Helpers.TemplateUtils.PatternBool)
+                                .Returns(
+                                    ReadAllText(
+                                        "PostfixCodeCompletion.Test_Files.generated.as3.AfterGenerateWhile_fromBoolean.as"))
+                                .SetName("while from true.|");
+                    }
+                }
+
                 public IEnumerable<TestCaseData> Par
                 {
                     get
@@ -687,7 +706,8 @@ namespace PostfixCodeCompletion.Completion
                 [Test, TestCaseSource("Const"), TestCaseSource("Var"), TestCaseSource("Constructor"), TestCaseSource("Par"), TestCaseSource("Return"),
                        TestCaseSource("If"), TestCaseSource("Else"), TestCaseSource("Not"), TestCaseSource("Notnull"), TestCaseSource("Null"),
                        TestCaseSource("Foreach"), TestCaseSource("Forin"), TestCaseSource("For"), TestCaseSource("Forr"),
-                       TestCaseSource("New")]
+                       TestCaseSource("New"),
+                       TestCaseSource("While")]
                 public string AS3(string sourceText, ClassModel type, string template, string pccpattern) => Generate(sourceText, type, template, pccpattern);
             }
         }
