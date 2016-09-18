@@ -11,9 +11,7 @@ Kind of surround templates on steroids baked with code completion.
 
 ### Installation
 
-Download the latest release. Open the .fdz file with FlashDevelop.
-
-https://github.com/SlavaRa/fdplugin-postfix-code-completion/releases
+Download [the latest release](https://github.com/SlavaRa/fdplugin-postfix-code-completion/releases). Open the .fdz file with FlashDevelop.
 
 ## Features
 Available templates for **AS3**:
