@@ -539,12 +539,12 @@ namespace PostfixCodeCompletion.Completion
                     }
                 }
 
-                [Test, TestCaseSource("Const"), TestCaseSource("Var"), TestCaseSource("Constructor"), TestCaseSource("Par"), TestCaseSource("Return"),
-                       TestCaseSource("If"), TestCaseSource("Else"), TestCaseSource("Not"), TestCaseSource("Notnull"), TestCaseSource("Null"),
-                       TestCaseSource("Foreach"), TestCaseSource("Forin"), TestCaseSource("For"), TestCaseSource("Forr"),
-                       TestCaseSource("New"),
-                       TestCaseSource("While"), TestCaseSource("Dowhile"),
-                       TestCaseSource("Trace")]
+                [Test, TestCaseSource(nameof(Const)), TestCaseSource(nameof(Var)), TestCaseSource(nameof(Constructor)), TestCaseSource(nameof(Par)), TestCaseSource(nameof(Return)),
+                       TestCaseSource(nameof(If)), TestCaseSource(nameof(Else)), TestCaseSource(nameof(Not)), TestCaseSource(nameof(Notnull)), TestCaseSource(nameof(Null)),
+                       TestCaseSource(nameof(Foreach)), TestCaseSource(nameof(Forin)), TestCaseSource(nameof(For)), TestCaseSource(nameof(Forr)),
+                       TestCaseSource(nameof(New)),
+                       TestCaseSource(nameof(While)), TestCaseSource(nameof(Dowhile)),
+                       TestCaseSource(nameof(Trace))]
                 public string AS3(string sourceText, ClassModel type, string template, string pccpattern) => Generate(sourceText, type, template, pccpattern);
             }
         }

@@ -61,6 +61,7 @@
     <Compile Include="TestUtils\TestFile.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="packages.config" />
     <EmbeddedResource Include="Test Snippets\as3\postfixgenerator\const.fds" />
     <EmbeddedResource Include="Test Snippets\as3\postfixgenerator\constructor.fds" />
