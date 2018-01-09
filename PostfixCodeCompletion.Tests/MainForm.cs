@@ -111,6 +111,11 @@ namespace FlashDevelop
             throw new NotImplementedException();
         }
 
+        public DockContent CreateDynamicPersistDockablePanel(Control ctrl, string guid, string id, Image image, DockState defaultDockState)
+        {
+            throw new NotImplementedException();
+        }
+
         public bool CallCommand(string command, string arguments)
         {
             throw new NotImplementedException();
@@ -180,6 +185,11 @@ namespace FlashDevelop
             getThemeColorCount++;
 
             return fallback;
+        }
+
+        public void SetUseTheme(object parent, bool use)
+        {
+            throw new NotImplementedException();
         }
 
         public bool GetThemeFlag(string id, bool fallback)

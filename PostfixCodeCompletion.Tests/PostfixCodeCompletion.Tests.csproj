@@ -33,9 +33,8 @@
     <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="NSubstitute, Version=1.9.2.0, Culture=neutral, PublicKeyToken=92dd2e9066daa5ca, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\packages\NSubstitute.1.9.2.0\lib\net35\NSubstitute.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="NSubstitute">
+      <HintPath>..\..\..\..\packages\NSubstitute.2.0.3\lib\net40\NSubstitute.dll</HintPath>
     </Reference>
     <Reference Include="nunit.framework, Version=2.6.4.14350, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
       <HintPath>..\..\..\..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
@@ -45,10 +44,6 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Completion\PostfixGeneratorTests.cs" />
@@ -57,6 +52,7 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TestBase.cs" />
     <Compile Include="TestUtils\TestFile.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -187,10 +183,6 @@
     <ProjectReference Include="..\..\ASCompletion\ASCompletion.csproj">
       <Project>{4EBF2653-9654-4E40-880E-0046B3D6210E}</Project>
       <Name>ASCompletion</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\HaXeContext\HaXeContext.csproj">
-      <Project>{5b4e9515-994a-4da7-9916-cda8fd874701}</Project>
-      <Name>HaXeContext</Name>
     </ProjectReference>
     <ProjectReference Include="..\PostfixCodeCompletion\PostfixCodeCompletion.csproj">
       <Project>{e511b03b-81fd-4c39-b587-211f2a1603a1}</Project>
