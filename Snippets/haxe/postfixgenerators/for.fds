@@ -5,3 +5,7 @@ for ($(ItmUniqueVar) in 0...$(PCCCollection).length) $(CSLB){
 for ($(ItmUniqueVar) in 0...$(PCCNumber)) $(CSLB){
 	$(EntryPoint)
 }
+#pcc:PCCString
+for ($(ItmUniqueVar) in 0...$(PCCString).length) $(CSLB){
+	$(EntryPoint)
+}

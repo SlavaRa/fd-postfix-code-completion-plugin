@@ -6,3 +6,7 @@ for (var $(ItmUniqueVar):int = 0; $(ItmUniqueVar) < $(PCCCollection).length; $(I
 for (var $(ItmUniqueVar):int = 0; $(ItmUniqueVar) < $(PCCNumber); $(ItmUniqueVar)++) $(CSLB){
 	$(EntryPoint)
 }
+#pcc:PCCString
+for (var $(ItmUniqueVar):int = 0; $(ItmUniqueVar) < $(PCCString).length; $(ItmUniqueVar)++) $(CSLB){
+	$(EntryPoint)
+}
