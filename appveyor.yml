@@ -27,7 +27,8 @@ build_script:
 - mv %APPVEYOR_BUILD_FOLDER%/* %PLUGIN_PATH%
 - nuget restore %FD_PATH%\FlashDevelop.sln
 - nuget restore %PLUGIN_PATH%\%PLUGIN_NAME%.sln
-- msbuild /p:Configuration=Debug+Tests /p:Platform=x86 /v:m %FD_PATH%\FlashDevelop.sln
+#- msbuild /p:Configuration=Debug+Tests /p:Platform=x86 /v:m %FD_PATH%\FlashDevelop.sln
+- msbuild /p:Configuration=Release /p:Platform=x86 /v:m %FD_PATH%\FlashDevelop.sln
 - mkdir %FD_SETTINGS%
 - cp -r %FD_PATH%\%FD_EXECUTABLE_DIR%\Settings %FD_SETTINGS%\Settings
 - cp -r %FD_PATH%\%FD_EXECUTABLE_DIR%\Snippets %FD_SETTINGS%\Snippets
