@@ -25,8 +25,10 @@ build: off
 build_script:
 - cd c:\
 - mv %APPVEYOR_BUILD_FOLDER% %PLUGIN_PATH%
+- cd %APPVEYOR_BUILD_FOLDER%
 - ls -la
-- ls -la %PLUGIN_PATH%
+- cd %PLUGIN_PATH%
+- ls -la
 - nuget restore %FD_PATH%\FlashDevelop.sln
 - nuget restore %PLUGIN_PATH%\%PLUGIN_NAME%.sln
 - msbuild /p:Configuration=Debug+Tests /p:Platform=x86 /v:m %FD_PATH%\FlashDevelop.sln
