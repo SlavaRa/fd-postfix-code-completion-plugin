@@ -1,15 +1,10 @@
 ﻿using System.Collections.Generic;
-using System.Reflection;
-using System.Windows.Forms;
-using AS3Context;
-using ASCompletion;
 using ASCompletion.Completion;
 using ASCompletion.Context;
 using ASCompletion.Model;
-using ASCompletion.Settings;
+using ASCompletion.TestUtils;
 using NSubstitute;
 using NUnit.Framework;
-using PluginCore.Helpers;
 using PostfixCodeCompletion.Helpers;
 using PostfixCodeCompletion.TestUtils;
 using TemplateUtils = PostfixCodeCompletion.Helpers.TemplateUtils;
@@ -17,27 +12,13 @@ using TemplateUtils = PostfixCodeCompletion.Helpers.TemplateUtils;
 namespace PostfixCodeCompletion.Completion
 {
     [TestFixture]
-    internal class PostfixGeneratorTests : TestBase
+    internal class PostfixGeneratorTests : ASCompleteTests
     {
         [TestFixture]
         public class GeneratorJob : PostfixGeneratorTests
         {
             [TestFixtureSetUp]
-            public void GenerateJobSetup()
-            {
-                var pluginMain = Substitute.For<ASCompletion.PluginMain>();
-                var pluginUI = new PluginUI(pluginMain);
-                pluginMain.MenuItems.Returns(new List<ToolStripItem>());
-                pluginMain.Settings.Returns(new GeneralSettings());
-                pluginMain.Panel.Returns(pluginUI);
-                #region ASContext.GlobalInit(pluginMain);
-                var method = typeof(ASContext).GetMethod("GlobalInit", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Static);
-                method.Invoke(null, new[] {pluginMain});
-                #endregion
-                ASContext.Context = Substitute.For<IASContext>();
-                CurrentDocument.SciControl.Returns(Sci);
-                TemplateUtils.Settings = new Settings();
-            }
+            public void GenerateJobSetup() => TemplateUtils.Settings = new Settings();
 
             static string ConvertWinNewlineToUnix(string s) => s.Replace("\r\n", "\n");
 
@@ -46,24 +27,7 @@ namespace PostfixCodeCompletion.Completion
 
             protected string Generate(string sourceText, ClassModel type, string template, string pccpattern)
             {
-                Sci.Text = sourceText;
-                SnippetHelper.PostProcessSnippets(Sci, 0);
-                var context = new Context(new AS3Settings());
-                ASContext.Context.Features.Returns(context.Features);
-                ASContext.Context.IsFileValid.Returns(true);
-                var currentModel = new FileModel {Context = ASContext.Context};
-                new ASFileParser().ParseSrc(currentModel, Sci.Text);
-                var currentClass = currentModel.Classes[0];
-                ASContext.Context.CurrentClass.Returns(currentClass);
-                ASContext.Context.CurrentModel.Returns(currentModel);
-                ASContext.Context.CurrentMember.Returns(currentClass.Members[0]);
-                ASContext.Context.GetVisibleExternalElements().Returns(_ => context.GetVisibleExternalElements());
-                ASContext.Context.GetCodeModel(null).ReturnsForAnyArgs(x =>
-                {
-                    var src = x[0] as string;
-                    return string.IsNullOrEmpty(src) ? null : context.GetCodeModel(src);
-                });
-                ASContext.Context.ResolveType(null, null).ReturnsForAnyArgs(type);
+                SetSrc(sci, sourceText);
                 ASContext.Context
                     .When(x => x.ResolveTopLevelElement(Arg.Any<string>(), Arg.Any<ASResult>()))
                     .Do(x =>
@@ -77,14 +41,18 @@ namespace PostfixCodeCompletion.Completion
                 template = template.Replace("$(ItmUniqueVar)", ASComplete.FindFreeIterator(ASContext.Context, ASContext.Context.CurrentClass, new ASResult().Context));
                 template = TemplateUtils.ProcessTemplate(pccpattern, template, expr);
                 TemplateUtils.InsertSnippetText(expr, template, pccpattern);
-                return ConvertWinNewlineToUnix(Sci.Text);
+                return ConvertWinNewlineToUnix(sci.Text);
             }
 
             [TestFixture]
             public class AS3GeneratorTests : GeneratorJob
             {
                 [TestFixtureSetUp]
-                public void AS3GeneratorTestsSetup() => Sci.ConfigurationLanguage = "as3";
+                public void Setup()
+                {
+                    ASContext.Context.SetAs3Features();
+                    sci.ConfigurationLanguage = "as3";
+                }
 
                 public TestCaseData GetTestCaseFromArray(string patternPath) => new TestCaseData(
                     ReadCode("BeforeGenerate_fromArray"),
@@ -506,7 +474,7 @@ namespace PostfixCodeCompletion.Completion
                     }
                 }
 
-                public IEnumerable<TestCaseData> Dowhile
+                public IEnumerable<TestCaseData> DoWhile
                 {
                     get
                     {
@@ -543,7 +511,7 @@ namespace PostfixCodeCompletion.Completion
                        TestCaseSource(nameof(If)), TestCaseSource(nameof(Else)), TestCaseSource(nameof(Not)), TestCaseSource(nameof(Notnull)), TestCaseSource(nameof(Null)),
                        TestCaseSource(nameof(Foreach)), TestCaseSource(nameof(Forin)), TestCaseSource(nameof(For)), TestCaseSource(nameof(Forr)),
                        TestCaseSource(nameof(New)),
-                       TestCaseSource(nameof(While)), TestCaseSource(nameof(Dowhile)),
+                       TestCaseSource(nameof(While)), TestCaseSource(nameof(DoWhile)),
                        TestCaseSource(nameof(Trace))]
                 public string AS3(string sourceText, ClassModel type, string template, string pccpattern) => Generate(sourceText, type, template, pccpattern);
             }
