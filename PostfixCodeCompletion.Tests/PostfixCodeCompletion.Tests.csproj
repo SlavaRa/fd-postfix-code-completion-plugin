@@ -35,6 +35,7 @@
   <ItemGroup>
     <Reference Include="NSubstitute">
       <HintPath>..\..\..\..\packages\NSubstitute.2.0.3\lib\net40\NSubstitute.dll</HintPath>
+	  <Private>True</Private>
     </Reference>
     <Reference Include="nunit.framework, Version=2.6.4.14350, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
       <HintPath>..\..\..\..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
@@ -163,26 +164,23 @@
     <ProjectReference Include="..\..\..\..\PluginCore\PluginCore.csproj">
       <Project>{61885F70-B4DC-4B44-852D-5D6D03F2A734}</Project>
       <Name>PluginCore</Name>
+	  <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\..\..\..\Tests\External\Plugins\ASCompletion.Tests\ASCompletion.Tests.csproj">
       <Project>{ABC71D26-295C-4C6C-B6DE-320AD49EEF79}</Project>
       <Name>ASCompletion.Tests</Name>
+	  <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\..\ASCompletion\ASCompletion.csproj">
       <Project>{4EBF2653-9654-4E40-880E-0046B3D6210E}</Project>
       <Name>ASCompletion</Name>
+	  <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\PostfixCodeCompletion\PostfixCodeCompletion.csproj">
       <Project>{e511b03b-81fd-4c39-b587-211f2a1603a1}</Project>
       <Name>PostfixCodeCompletion</Name>
+	  <Private>False</Private>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
 </Project>
