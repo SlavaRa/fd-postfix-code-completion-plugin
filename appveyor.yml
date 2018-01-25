@@ -27,13 +27,10 @@ build_script:
 - mv %APPVEYOR_BUILD_FOLDER%/* %PLUGIN_PATH%
 - cd %FD_PATH%\
 - nuget restore FlashDevelop.sln
-#- nuget restore %PLUGIN_PATH%\%PLUGIN_NAME%.sln
-#- msbuild /p:Configuration=Debug+Tests /p:Platform=x86 /v:m %FD_PATH%\FlashDevelop.sln
-- msbuild /p:Configuration=Release /p:Platform=x86 /v:m FlashDevelop.sln
+- msbuild /p:Configuration=Debug+Tests /p:Platform=x86 /v:m FlashDevelop.sln
 - mkdir %FD_SETTINGS%
 - cp -r %FD_PATH%\%FD_EXECUTABLE_DIR%\Settings %FD_SETTINGS%\Settings
 - cp -r %FD_PATH%\%FD_EXECUTABLE_DIR%\Snippets %FD_SETTINGS%\Snippets
-#- cp -T %FD_PATH%\%FD_EXECUTABLE_DIR%\SciLexer.dll %PLUGIN_PATH%\%PLUGIN_NAME%Tests\bin\Debug\SciLexer.dll
 #- nunit-console-x86 %PLUGIN_PATH%\%PLUGIN_NAME%Tests\bin\Debug\%PLUGIN_NAME%.Tests.dll
 after_build:
 - mkdir %APPVEYOR_BUILD_FOLDER%\$(BaseDir)\Plugins

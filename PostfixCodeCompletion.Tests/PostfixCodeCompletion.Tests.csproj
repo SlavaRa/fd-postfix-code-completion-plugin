@@ -193,7 +193,6 @@
     <ProjectReference Include="..\PostfixCodeCompletion\PostfixCodeCompletion.csproj">
       <Project>{e511b03b-81fd-4c39-b587-211f2a1603a1}</Project>
       <Name>PostfixCodeCompletion</Name>
-	  <Private>False</Private>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
