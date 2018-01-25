@@ -184,7 +184,6 @@
     <ProjectReference Include="..\..\..\..\Tests\External\Plugins\ASCompletion.Tests\ASCompletion.Tests.csproj">
       <Project>{ABC71D26-295C-4C6C-B6DE-320AD49EEF79}</Project>
       <Name>ASCompletion.Tests</Name>
-	  <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\..\ASCompletion\ASCompletion.csproj">
       <Project>{4EBF2653-9654-4E40-880E-0046B3D6210E}</Project>
