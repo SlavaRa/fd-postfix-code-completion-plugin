@@ -31,8 +31,7 @@ build_script:
 - mkdir %FD_SETTINGS%
 - cp -r %FD_PATH%\%FD_EXECUTABLE_DIR%\Settings %FD_SETTINGS%\Settings
 - cp -r %FD_PATH%\%FD_EXECUTABLE_DIR%\Snippets %FD_SETTINGS%\Snippets
-#- nunit-console-x86 %FD_PATH%\%FD_EXECUTABLE_DIR%\%PLUGIN_NAME%.Tests.dll
-- /c/Program\ Files\ \(x86\)/NUnit 2.6.3/bin/nunit-console-x86.exe %FD_PATH%\%FD_EXECUTABLE_DIR%\%PLUGIN_NAME%.Tests.dll
+- nunit-console-x86 %FD_PATH%\%FD_EXECUTABLE_DIR%\%PLUGIN_NAME%.Tests.dll
 after_build:
 - mkdir %APPVEYOR_BUILD_FOLDER%\$(BaseDir)\Plugins
 - mv %PLUGIN_DLL% %APPVEYOR_BUILD_FOLDER%\$(BaseDir)\Plugins\%PLUGIN_NAME%.dll

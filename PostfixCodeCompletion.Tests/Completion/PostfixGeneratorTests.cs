@@ -317,11 +317,11 @@ namespace PostfixCodeCompletion.Completion
                             GetTestCaseFromUInt("var", TemplateUtils.PatternMember)
                                 .Returns(ReadCode("AfterGenerateVar_fromUInt"))
                                 .SetName("1.var|");
-                        yield return
-                            GetTestCaseFromNumber("var", TemplateUtils.PatternMember)
-                                .Returns(ReadCode("AfterGenerateVar_fromNumber"))
-                                .SetName("10.0.var|")
-                                .Ignore();
+                        //yield return
+                        //    GetTestCaseFromNumber("var", TemplateUtils.PatternMember)
+                        //        .Returns(ReadCode("AfterGenerateVar_fromNumber"))
+                        //        .SetName("10.0.var|")
+                        //        .Ignore();
                         /*yield return
                             new TestCaseData(
                                     ReadCode("BeforeGenerateVar_fromInt"),
@@ -381,11 +381,11 @@ namespace PostfixCodeCompletion.Completion
                             GetTestCaseFromUInt("const", TemplateUtils.PatternMember)
                                 .Returns(ReadCode("AfterGenerateConst_fromUInt"))
                                 .SetName("1.const|");
-                        yield return
-                            GetTestCaseFromNumber("const", TemplateUtils.PatternMember)
-                                .Returns(ReadCode("AfterGenerateConst_fromNumber"))
-                                .SetName("10.0.const|")
-                                .Ignore();
+                        //yield return
+                        //    GetTestCaseFromNumber("const", TemplateUtils.PatternMember)
+                        //        .Returns(ReadCode("AfterGenerateConst_fromNumber"))
+                        //        .SetName("10.0.const|")
+                        //        .Ignore();
                         /*yield return
                             new TestCaseData(
                                     ReadCode(
